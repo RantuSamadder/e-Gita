@@ -7,11 +7,22 @@
     box-sizing: border-box;
 }
 
+/* ==========================================================================
+   ১. GLOBAL FONTS & MOBILE FIX (মোবাইলে কালপুরুষ ফন্ট লোড করার জন্য)
+   ========================================================================== */
 @font-face {
     font-family: 'Kalpurush';
-    src: url('https://cdn.jsdelivr.net/gh/rupokify/Kalpurush@master/fonts/kalpurush.ttf') format('truetype');
+    /* এই নতুন লিংকটি মোবাইল ব্রাউজারে কালপুরুষ ফন্ট ডাউনলোড করতে বাধ্য করবে */
+    src: url('https://cdn.jsdelivr.net/gh/byomkesh-dash/bangla-fonts@main/dist/Kalpurush/Kalpurush.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html {
@@ -21,7 +32,8 @@ html {
 body {
     background: #efe3c2;
     color: #2f2417;
-    font-family: 'Kalpurush', 'Noto Serif Bengali', 'EB Garamond', serif;
+    /* এখানে 'EB Garamond' এর বদলে 'Kalpurush' কে প্রধান ফন্ট করা হলো যেন মোবাইলও এটি পায় */
+    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
     line-height: 1.65;
     background-image: radial-gradient(rgba(90,55,20,0.04) 1px, transparent 1px);
     background-size: 8px 8px;
