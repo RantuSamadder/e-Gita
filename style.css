@@ -1,18 +1,9 @@
 /* ==========================================================================
-   ১. GLOBAL FONTS & BASIC RESET
-   ========================================================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* ==========================================================================
-   ১. GLOBAL FONTS & MOBILE FIX (মোবাইলে কালপুরুষ ফন্ট লোড করার জন্য)
+   1. GLOBAL FONTS & BASIC RESET
    ========================================================================== */
 @font-face {
     font-family: 'Kalpurush';
-    /* এই নতুন লিংকটি মোবাইল ব্রাউজারে কালপুরুষ ফন্ট ডাউনলোড করতে বাধ্য করবে */
+    /* This link forces mobile browsers to download and cache the Kalpurush font */
     src: url('https://cdn.jsdelivr.net/gh/byomkesh-dash/bangla-fonts@main/dist/Kalpurush/Kalpurush.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
@@ -32,15 +23,14 @@ html {
 body {
     background: #efe3c2;
     color: #2f2417;
-    /* এখানে 'EB Garamond' এর বদলে 'Kalpurush' কে প্রধান ফন্ট করা হলো যেন মোবাইলও এটি পায় */
-    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
+    font-family: 'Kalpurush', sans-serif !important;
     line-height: 1.65;
     background-image: radial-gradient(rgba(90,55,20,0.04) 1px, transparent 1px);
     background-size: 8px 8px;
 }
 
 /* ==========================================================================
-   ২. ADVANCED ELEGANT LOADER
+   2. ADVANCED ELEGANT LOADER
    ========================================================================== */
 #loader {
     position: fixed;
@@ -130,7 +120,7 @@ body {
 @keyframes subtitleFade { to { opacity: 0.75; } }
 
 /* ==========================================================================
-   ৩. MAIN LAYOUT & HERO
+   3. MAIN LAYOUT & HERO
    ========================================================================== */
 .container{
     width: min(900px, 94%);
@@ -160,7 +150,7 @@ body {
 }
 
 /* ==========================================================================
-   ৪. BOOK STYLE SECTIONS & INDEX (পাঠ বিন্যাস)
+   4. BOOK STYLE SECTIONS & INDEX (পাঠ বিন্যাস)
    ========================================================================== */
 .book-view{
     background: #f8edd0;
@@ -219,7 +209,7 @@ body {
 }
 
 /* ==========================================================================
-   ৫. CHAPTER LAYOUT & CONTROLS
+   5. CHAPTER LAYOUT & CONTROLS
    ========================================================================== */
 .chapter-view{
     display: none;
@@ -297,7 +287,7 @@ body {
 }
 
 /* ==========================================================================
-   ৬. VERSE CARD & FIELD LAYOUT
+   6. VERSE CARD & FIELD LAYOUT
    ========================================================================== */
 .verse-card{
     background: #fdf6e3;
@@ -342,14 +332,14 @@ body {
 }
 
 /* ==========================================================================
-   ৭. TEXT LANGUAGES & STYLES
+   7. TEXT LANGUAGES & HARDCODED STYLES
    ========================================================================== */
 .sanskrit{
-    font-family: 'Tiro Devanagari Sanskrit','Noto Serif Devanagari',serif;
-    font-size: 1.75rem;
+    font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important;
+    font-size: 1.75rem !important;
     line-height: 2.0;
     color: #4f2f12;
-    font-weight: 700;
+    font-weight: 700 !important;
     text-align: center !important;
     width: 100%;
     display: block;
@@ -357,14 +347,12 @@ body {
 }
 
 .english-text{
-    font-family: 'Kalpurush', sans-serif;
     text-align: left;
     font-size: 1.08rem;
     line-height: 1.8;
 }
 
 .english-transliteration{
-    font-family: 'Kalpurush', sans-serif;
     font-style: italic;
     letter-spacing: 0.4px;
     font-weight: 700;
@@ -376,14 +364,12 @@ body {
 }
 
 .bangla-text{
-    font-family: 'Kalpurush','Noto Serif Bengali',sans-serif !important;
     font-size: 1.15rem;
     line-height: 1.9;
     text-align: left;
 }
 
 .bangla-transliteration{
-    font-family: 'Kalpurush', sans-serif !important;
     font-size: 1.25rem;
     line-height: 1.8;
     font-weight: 700; 
@@ -394,31 +380,14 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* 🎯 গীতার গান কলামের জন্য সুপার প্রায়োরিটি সেন্টার রুল */
-.verse-card .field .field-content.gitar-gaan-text,
-.gitar-gaan-text {
-    text-align: center !important;
-    display: block !important;
-    width: 100% !important;
-    font-size: 1.15rem !important;
-    line-height: 1.7 !important;
-    color: #1a0f05 !important; 
-    font-family: 'Kalpurush', sans-serif !important;
-}
-
-.verse-card .field .field-content.gitar-gaan-text * {
-    text-align: center !important;
-}
-
 /* ==========================================================================
-   ৮. FOOTER & NAVIGATION BOTTOM LAYOUT
+   8. FOOTER & NAVIGATION BOTTOM LAYOUT
    ========================================================================== */
 .footer{
     text-align: center;
     padding: 35px 20px;
     color: #7a6a57;
     font-size: 1.1rem;
-    font-family: 'Kalpurush', sans-serif;
 }
 
 .chapter-nav {
@@ -454,7 +423,6 @@ body {
 .prev-chap-btn {
     background: #8a5a2d;
     color: #fff;
-    font-family: 'Kalpurush', sans-serif;
 }
 
 .prev-chap-btn:hover {
@@ -464,7 +432,6 @@ body {
 .next-chap-btn {
     background: #6d421c;
     color: #fff;
-    font-family: 'Kalpurush', sans-serif;
 }
 
 .next-chap-btn:hover {
@@ -472,7 +439,7 @@ body {
 }
 
 /* ==========================================================================
-   ৯. DYNAMIC FIXES & SPECIFIC OVERRIDES
+   9. DYNAMIC FIXES & ABSOLUTE MOBILE FONT SAFEGUARD
    ========================================================================== */
 #checkboxContainer,
 #checkboxContainer label,
@@ -481,12 +448,24 @@ body {
 .filter-options,
 .filter-options label,
 .filter-options span {
-    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
     font-size: 1.05rem !important;
 }
 
+/* 🎯 Compel all text except Sanskrit to strictly render in Kalpurush font on mobile */
+*:not(.sanskrit) {
+    font-family: 'Kalpurush', sans-serif !important;
+}
+
+/* Targets all dynamic Google Sheet columns to lock into Kalpurush */
+.field-content:not(.sanskrit),
+.field-content div:not(.sanskrit),
+[class*="dynamic-"],
+[class^="dynamic-"] {
+    font-family: 'Kalpurush', sans-serif !important;
+}
+
 /* ==========================================================================
-   ১০. RESPONSIVE DESIGN (MOBILE ADJUSTMENTS)
+   10. RESPONSIVE DESIGN (MOBILE ADJUSTMENTS)
    ========================================================================== */
 @media(max-width:768px){
     .hero h1{
@@ -498,8 +477,8 @@ body {
     }
 
     .sanskrit{
-        font-size: 1.35rem;
-        line-height: 2;
+        font-size: 1.35rem !important;
+        line-height: 2 !important;
     }
 
     .book-view,
@@ -525,53 +504,33 @@ body {
     .outer-ring { width: 65px; height: 65px; }
     .inner-ring { width: 40px; height: 40px; }
 }
-/* ==========================================================================
-   ভবিষ্যতের সব ডাইনামিক কলাম একবারে কালপুরুষ করার ম্যাজিক ফিক্স
-   ========================================================================== */
-.field-content,
-[class*="dynamic-"],
-[class^="dynamic-"],
-.verse-card .field .field-content div {
-  font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
-}
-/* ==========================================================================
-   তাৎপর্য কলামের জন্য চূড়ান্ত ফিক্স (টেক্সট জাস্টিফাই ও কালপুরুষ)
-   ========================================================================== */
-.purport-text,
-div.purport-text,
-.verse-card .field .purport-text,
-.verse-card .field-content.purport-text {
-  text-align: justify !important; /* লেখা দুই পাশ সমান (Justify) করার জন্য */
-  text-justify: inter-word;        /* শব্দের মাঝে সুষম স্পেস তৈরি করবে */
-  display: block !important;
-  width: 100% !important;
-  font-size: 1.15rem;
-  line-height: 1.8;                /* পড়ার সুবিধার্থে লাইন স্পেসিং একটু বাড়ানো হলো */
-  color: #2b1a08; 
-  font-family: 'Kalpurush', sans-serif !important;
-}
 
-/* তাৎপর্যের ভেতরে যদি কোনো চাইল্ড প্যারাগ্রাফ বা এলিমেন্ট থাকে */
-.purport-text * {
-  text-align: justify !important;
-}
 /* ==========================================================================
-   মোবাইলের জন্য চূড়ান্ত ও বাধ্যতামূলক ফন্ট ফিক্স (সংস্কৃত বাদে সব কালপুরুষ)
+   11. GEETAR GAAN & PURPORT TARGETED OVERRIDES (FIXES SCRIPT BACKUP SHIFT)
    ========================================================================== */
-*:not(.sanskrit) {
-    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
-}
-
-/* গীতার গান কলামকে মোবাইলেও ১০০% সেন্টারে রাখার জন্য */
 .gitar-gaan-text, 
 .gitar-gaan-text *, 
+[class*="gitar-gaan"],
 [class*="dynamic-"].gitar-gaan-text {
     font-family: 'Kalpurush', sans-serif !important;
     text-align: center !important;
     display: block !important;
+    width: 100% !important;
+    font-size: 1.15rem !important;
+    line-height: 1.7 !important;
+    color: #1a0f05 !important;
 }
-/* কলামের টাইটেল বা ভেতরের টেক্সটে 'গীতার গান' লেখা থাকলেই কালপুরুষ ফন্ট ও সেন্টার হবে */
-[class*="gitar-gaan"], .field:has(.field-title:contains("গীতার গান")) .field-content {
+
+.purport-text, 
+.purport-text *, 
+[class*="purport"],
+.verse-card .field-content.purport-text {
     font-family: 'Kalpurush', sans-serif !important;
-    text-align: center !important;
+    text-align: justify !important;
+    text-justify: inter-word;
+    display: block !important;
+    width: 100% !important;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #2b1a08;
 }
