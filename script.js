@@ -1,4 +1,4 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbyD3NgN6uTM2o2i4jcp6bZxEDtibIBpXnWl2mnTiXsOe1B1gzUKeiQhPMQabbS9oc4omw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzDO8jWrQxRI1xcTRI2EuKFkxyhxSEFwZq1TQmrCJpH3A2blnfrD8On-7grv-sIkSs3/exec';
 
 // Changed to a let variable so it can be populated dynamically
 let checkboxFields = [];
@@ -178,7 +178,7 @@ function renderVerses(chapter){
                 let extraClass = '';
 
                 // নতুন বাংলা কলামের নাম অনুযায়ী সিএসএস ক্লাস ম্যাপিং
-                if(field === 'সংস্কৃতম্'){
+                if(field === 'সংষ্কৃতম্'){
                     extraClass = 'sanskrit';
                 }
                 else if(field === 'English Transliteration'){
