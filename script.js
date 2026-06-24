@@ -193,6 +193,12 @@ function renderVerses(chapter){
                 else if(field === 'অনুবাদ'){
                     extraClass = 'bangla-text';
                 }
+                else if(field.trim() === 'গীতার গান'){
+                    extraClass = 'gitar-gaan-text'; 
+                }
+                else if(field.trim() === 'তাৎপর্য'){
+                    extraClass = 'purport-text'; 
+                }
                 else {
                     // নতুন কোনো কলাম যোগ করলে স্বয়ংক্রিয় ডায়নামিক ক্লাস তৈরি হবে
                     extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-');
