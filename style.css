@@ -3,7 +3,9 @@
    ========================================================================== */
 @font-face {
     font-family: 'Kalpurush';
-    src: url('https://cdn.jsdelivr.net/gh/byomkesh-dash/bangla-fonts@main/dist/Kalpurush/Kalpurush.ttf') format('truetype');
+    /* আপনার আপলোড করা assets ফোল্ডারের সঠিক পাথ */
+    src: url('assets/kalpurush.ttf') format('truetype'),
+         url('../assets/kalpurush.ttf') format('truetype'); /* ব্যাকআপ রিলেটিভ পাথ */
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -22,9 +24,9 @@ html {
     scroll-behavior: smooth;
 }
 
-/* মোবাইল ও ডেস্কটপে গ্লোবাল কালপুরুষ ফন্ট রুল */
-body, html, input, button, select, textarea {
-    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
+/* গ্লোবাল ফন্ট রুলস - মোবাইল ও ডেস্কটপ সবখানে কালপুরুষ ফন্ট জোরপূর্বক নিশ্চিত করার জন্য */
+body, html, table, div, span, p, h1, h2, h3, button, label, input, textarea, select {
+    font-family: 'Kalpurush', Arial, sans-serif !important;
 }
 
 body {
@@ -312,7 +314,7 @@ body {
 }
 
 /* ==========================================================================
-   7. TARGETED LANGUAGES & ALIGNMENTS (UPDATED & SECURED)
+   7. TARGETED LANGUAGES & ALIGNMENTS (SECURED)
    ========================================================================== */
 /* সংষ্কৃতম্ কলাম - Tiro Devanagari Sanskrit */
 .sanskrit, 
@@ -434,19 +436,19 @@ body {
 }
 
 /* ==========================================================================
-   9. AUTOMATIC RUNTIME KALPURUSH LOCK (NO HARDCODING REQUIRED)
+   9. AUTOMATIC RUNTIME KALPURUSH LOCK (ANTI-OVERRIDE MASTER RULE)
    ========================================================================== */
-/* সংষ্কৃতম্ বাদে মোবাইল এবং ডেস্কটপের সমস্ত ডাইনামিক ডেটা, ফিল্ড ও টেক্সটকে কালপুরুষ ফন্টে লক রাখার মাস্টার রুল */
+/* সংষ্কৃতম্ বাদে মোবাইল এবং ডেস্কটপের অন্য সব ডাইনামিক ডেটা এবং ট্যাগকে কালপুরুষ ফন্টে লক রাখার মাস্টার রুল */
 body *:not(.sanskrit):not([class*="sanskrit"]) {
-    font-family: 'Kalpurush', 'Noto Serif Bengali', sans-serif !important;
+    font-family: 'Kalpurush', Arial, sans-serif !important;
 }
 
 /* ==========================================================================
    10. RESPONSIVE DESIGN (MOBILE ADJUSTMENTS)
    ========================================================================== */
 @media(max-width:768px){
-    body {
-        font-family: 'Kalpurush', sans-serif !important;
+    body, html, .field-content, .verse-card, span, div, p, label, input, button {
+        font-family: 'Kalpurush', Arial, sans-serif !important;
     }
 
     .hero h1{
