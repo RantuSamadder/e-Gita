@@ -65,7 +65,7 @@ function populateVerses(type) {
     }
 }
 
-// নির্দিষ্ট শ্লোকে স্ক্রোল করে জাম্প করার ফাংশন
+// নির্দিষ্ট শ্লোকে স্ক্রোল করে জাম্প করার ফাংশন (ফিক্সড)
 function jumpToVerse(type) {
     let chapName, verseValue;
 
@@ -74,37 +74,39 @@ function jumpToVerse(type) {
         verseValue = document.getElementById('mainVerseSelect').value;
         if (!chapName || !verseValue) return alert('দয়া করে অধ্যায় ও শ্লোক উভয়ই সিলেক্ট করুন।');
         
-        renderChapter(chapName);
+        // হোমপেইজ থেকে জাম্প করার সময় true পাঠানো নিশ্চিত করা হলো যাতে চেকবক্স তৈরি হয়
+        renderChapter(chapName, true); 
     } else {
         chapName = currentChapter;
         verseValue = document.getElementById('chapVerseSelect').value;
         if (!verseValue) return alert('দয়া করে শ্লোক সিলেক্ট করুন।');
     }
 
+    // শ্লোক কার্ড খুঁজে বের করে স্ক্রোল করা
     setTimeout(() => {
         const targetCard = document.getElementById(`verse-${verseValue}`);
         if (targetCard) {
             targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // একটু হাইলাইট করার জন্য ফ্ল্যাশ ইফেক্ট
             targetCard.style.background = '#ead8b1';
             setTimeout(() => { targetCard.style.background = '#fdf6e3'; }, 1500);
         }
-    }, 400); 
+    }, 500); // ভিউ রেন্ডার হওয়ার জন্য সামান্য বাড়তি সময় (500ms) দেওয়া হলো
 }
 
-// অধ্যায়ের কলাম অনুযায়ী ডাইনামিকালি চেকবক্স তৈরি করার ফাংশন (আপডেটেড)
+// অধ্যায়ের কলাম অনুযায়ী ডাইনামিকালি চেকবক্স তৈরি করার ফাংশন
 function createCheckboxesForChapter(chapter){
     const container = document.getElementById('checkboxContainer');
     container.innerHTML = '';
 
-    // যদি অধ্যায়ে কোনো শ্লোক না থাকে তবে ফেরত যাবে
+    // যদি অধ্যায়ে কোনো শ্লোক না থাকে তবে ফেরত যাবে
     if (!chapter.verses || chapter.verses.length === 0) return;
 
-    // এই অধ্যায়ের প্রথম শ্লোক থেকে সমস্ত কলামের নাম (হেডার) বের করা হচ্ছে
+    // এই অধ্যায়ের প্রথম শ্লোক থেকে সমস্ত কলামের নাম (হেডার) বের করা হচ্ছে
     const firstVerse = chapter.verses[0];
     const fields = Object.keys(firstVerse).filter(key => key !== 'শ্লোক');
 
-    // পূর্বের সিলেক্টেড স্টেট ধরে রাখার জন্য (যদি ইউজার কোনো চেকবক্স আনচেক করে থাকেন)
-    // প্রথমবার রেন্ডারের সময় সব চেকড (checked) থাকবে
+    // ডাইনামিক চেকবক্স জেনারেশন
     fields.forEach(field => {
         const label = document.createElement('label');
         label.innerHTML = `
@@ -149,7 +151,7 @@ function renderIndex(){
     });
 }
 
-// renderChapter ফাংশনে সামান্য পরিবর্তন আনা হয়েছে (আপডেটেড)
+// অধ্যায় রেন্ডারিং হ্যান্ডলার
 function renderChapter(chapterName, isFirstLoad = false){
     currentChapter = chapterName;
     const chapter = appData.chapters.find(
@@ -161,18 +163,18 @@ function renderChapter(chapterName, isFirstLoad = false){
     document.getElementById('bookView').style.display = 'none';
     document.getElementById('chapterView').style.display = 'block';
 
-    // যদি সরাসরি সূচীপত্র থেকে বা প্রথমবার অধ্যায়ে আসে, তবেই নতুন চেকবক্স লিস্ট তৈরি হবে
+    // নতুন অধ্যায় প্রথমবার লোড হলে বা ল্যান্ডিং পেজ থেকে সরাসরি জাম্প করলে চেকবক্স তৈরি হবে
     if (isFirstLoad) {
         createCheckboxesForChapter(chapter);
         
-        // চেকবক্সের চেঞ্জ ইভেন্ট লিসেনার সেট করা (ডুপ্লিকেট ইভেন্ট এড়াতে একবারই সেট করা ভালো)
+        // চেকবক্সের চেঞ্জ ইভেন্ট লিসেনার সেট করা
         const container = document.getElementById('checkboxContainer');
         container.onchange = (e) => {
             e.stopPropagation();
             const scrollY = window.scrollY;
             if(currentChapter){
                 requestAnimationFrame(() => {
-                    renderVerses(chapter); // শুধু শ্লোকগুলো রি-রেন্ডার হবে, পুরো চ্যাপ্টার নয়
+                    renderVerses(chapter); // শুধু শ্লোকগুলো রি-রেন্ডার হবে
                     window.scrollTo(0, scrollY);
                 });
             }
@@ -197,6 +199,7 @@ function renderChapter(chapterName, isFirstLoad = false){
         chapVerseSelect.appendChild(option);
     });
 
+    // সরাসরি সূচীপত্র বা জাম্প বাটন থেকে না আসলে স্ক্রোল টপে যাবে
     if (document.activeElement.tagName !== 'BUTTON') {
         window.scrollTo({ top:0, behavior:'smooth' });
     }
