@@ -561,7 +561,12 @@ body *:not(.sanskrit):not([class*="sanskrit"]) {
    10. RESPONSIVE DESIGN (MOBILE ADJUSTMENTS)
    ========================================================================== */
 @media(max-width:768px){
-    body, html, .field-content, .verse-card, span, div, p, label, input, button {
+    /* সংষ্কৃত ক্লাস বাদে বাকি সব এলিমেন্টে কালপুরুষ ফন্ট লক করা হলো */
+    body, html, .verse-card, label, input, button,
+    div:not(.sanskrit):not([class*="sanskrit"]), 
+    span:not(.sanskrit):not([class*="sanskrit"]), 
+    p:not(.sanskrit):not([class*="sanskrit"]),
+    .field-content:not(.sanskrit):not([class*="sanskrit"]) {
         font-family: 'Kalpurush', Arial, sans-serif !important;
     }
 
@@ -576,6 +581,7 @@ body *:not(.sanskrit):not([class*="sanskrit"]) {
     .sanskrit, [class*="sanskrit"]{
         font-size: 1.45rem !important;
         line-height: 2 !important;
+        font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important; /* মোবাইলেও ফন্ট নিশ্চিত করা হলো */
     }
 
     .book-view,
