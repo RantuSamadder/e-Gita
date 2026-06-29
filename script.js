@@ -255,7 +255,7 @@ function renderVerses(chapter){
                 if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; }
                 else if(field === 'English Transliteration'){ extraClass = 'english-transliteration'; }
                 else if(field === 'English Translation'){ extraClass = 'english-text'; }
-                else if(field === 'লিপ্যন্তর'){ extraClass = 'bangla-transliteration'; }
+                else if(field === 'উচ্চারণ'){ extraClass = 'bangla-transliteration'; }
                 else if(field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
                 else if(field.includes('গীতার') && field.includes('গান')){ extraClass = 'gitar-gaan-text'; }
                 else if(field.trim() === 'তাৎপর্য'){ extraClass = 'purport-text'; }
