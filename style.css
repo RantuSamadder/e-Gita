@@ -491,6 +491,23 @@ body {
     font-size: 1.08rem !important;
 }
 
+/* শব্দার্থ কলাম - টেক্সট এলাইনমেন্ট এবং সুন্দর বিন্যাস */
+.word-meanings,
+[class*="word-meanings"] {
+    text-align: justify !important;
+    font-size: 1.12rem !important;
+    line-height: 1.8 !important;
+    display: block !important;
+    width: 100% !important;
+    color: #3d2f1d !important;
+}
+
+/* শব্দার্থের ভেতরের বোল্ড করা শব্দগুলোর রঙ একটু আকর্ষণীয় করার জন্য (ঐচ্ছিক) */
+.word-meanings strong {
+    color: #6d421c;
+    font-weight: 700;
+}
+
 /* ==========================================================================
    8. FOOTER & NAVIGATION BOTTOM LAYOUT
    ========================================================================== */
@@ -606,4 +623,38 @@ body *:not(.sanskrit):not([class*="sanskrit"]) {
     }
     .outer-ring { width: 65px; height: 65px; }
     .inner-ring { width: 40px; height: 40px; }
+}
+/* ==========================================================================
+   11. SPECIAL PAGES (ভূমিকা ও মুখবন্ধ) STYLES
+   ========================================================================== */
+/* ভূমিকা ও মুখবন্ধ এর কার্ডের বিশেষ বিন্যাস */
+.verse-card.special-page {
+    border-left: 4px solid #6d421c !important; /* থিম কালার বর্ডার */
+    padding: 24px !important;
+}
+
+/* এই দুই অধ্যায়ের ভেতরের সব ধরণের টেক্সট কন্টেন্ট জাস্টিফাই করা */
+.verse-card.special-page .field-content {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    font-size: 1.15rem !important;
+    line-height: 1.85 !important;
+    color: #2f2417 !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* যদি কোন কারণে টেক্সট এর মধ্যে প্যারাগ্রাফ বা স্প্যান থাকে তাও জাস্টিফাই হবে */
+.verse-card.special-page .field,
+.verse-card.special-page .field-content * {
+    text-align: justify !important;
+    align-items: flex-start !important; /* লেফট থেকে এলাইন শুরু হবে */
+}
+
+/* ভূমিকা ও মুখবন্ধের ভেতরে থাকা .center-text কে জোরপূর্বক সেন্টারে রাখা */
+.verse-card.special-page .field-content .center-text {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 auto !important; /* সেন্টারিং নিশ্চিত করবে */
 }
