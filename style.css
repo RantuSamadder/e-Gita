@@ -320,6 +320,22 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
     .lang-col-en { 
         padding-left: 10px; 
     }
+    
+}
+@media(max-width: 768px) {
+    /* ইংরেজি মোডে হিরো টাইটেল বা প্যারাগ্রাফের সাইজ কমানোর জন্য */
+    body.lang-en .hero h1 {
+        font-size: 1.8rem; /* আগের ২.২rem থেকে কমিয়ে ১.৮rem করা হলো */
+    }
+    body.lang-en .hero p {
+        font-size: 0.9rem; /* সাবটাইটেল বা মহামন্ত্রের সাইজ কমানোর জন্য */
+    }
+    
+    /* যদি লেখাগুলো ইনডেক্স বা অধ্যায়ের ভেতরের কোনো টেক্সট হয় */
+    body.lang-en .book-title h2, 
+    body.lang-en .chapter-header h2 {
+        font-size: 1.5rem;
+    }
 }
 
 /* ==========================================================================
