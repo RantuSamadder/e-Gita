@@ -1,7 +1,54 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbzDO8jWrQxRI1xcTRI2EuKFkxyhxSEFwZq1TQmrCJpH3A2blnfrD8On-7grv-sIkSs3/exec';
 
 let appData = null;
-let currentChapter = null;
+let currentChapter = null; // Internal Bengali sheet name indicator
+let currentLang = 'bn'; // 'bn' or 'en'
+
+// UI Texts for Translation
+const UI = {
+    bn: {
+        loaderText: "শ্রীমদ্ভগবদ্গীতা যথাযথ",
+        heroTitle: "শ্রীমদ্ভগবদ্গীতা যথাযথ",
+        heroSubtitle: "হরে কৃষ্ণ হরে কৃষ্ণ কৃষ্ণ কৃষ্ণ হরে হরে <br> হরে রাম হরে রাম রাম রাম হরে হরে",
+        indexHeader: "সূচীপত্র",
+        jumpHeaderMain: "সরাসরি শ্লোকে যান",
+        optChap: "অধ্যায় নির্বাচন করুন",
+        optVerse: "শ্লোক নির্বাচন করুন",
+        btnGo: "যান →",
+        btnGoVerse: "শ্লোকে যান",
+        readingLayout: "পাঠ বিন্যাস",
+        backBtn: "← সূচীপত্রে ফিরে যান",
+        versePrefix: "শ্লোক",
+        prevBtnText: "← পূর্ববর্তী",
+        nextBtnText: "পরবর্তী",
+        alertBoth: "দয়া করে অধ্যায় ও শ্লোক উভয়ই সিলেক্ট করুন।",
+        alertVerse: "দয়া করে শ্লোক সিলেক্ট করুন।"
+    },
+    en: {
+        loaderText: "Śrīmad Bhagavad Gītā",
+        heroTitle: "Śrīmad Bhagavad Gītā As It Is",
+        heroSubtitle: "Hare Kṛṣṇa Hare Kṛṣṇa Kṛṣṇa Kṛṣṇa Hare Hare <br> Hare Rāma Hare Rāma Rāma Rāma Hare Hare",
+        indexHeader: "Index",
+        jumpHeaderMain: "Jump Directly to Verse",
+        optChap: "Select Chapter",
+        optVerse: "Select Verse",
+        btnGo: "Go →",
+        btnGoVerse: "Go to Verse",
+        readingLayout: "Reading Layout",
+        backBtn: "← Back to Index",
+        versePrefix: "Verse",
+        prevBtnText: "← Previous",
+        nextBtnText: "Next",
+        alertBoth: "Please select both chapter and verse.",
+        alertVerse: "Please select a verse."
+    }
+};
+
+// Allowed fields for Checkboxes and Rendering per Language
+const LANG_FIELDS = {
+    bn: ['শ্লোক', 'সংষ্কৃতম্', 'উচ্চারণ', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ'],
+    en: ['Verse', 'সংষ্কৃতম্', 'Transliteration', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface']
+};
 
 async function loadData(){
     try{
@@ -9,8 +56,9 @@ async function loadData(){
         const data = await response.json();
         appData = data;
         
+        applyLanguageUI();
         renderIndex();
-        initMainJumpFilter(); // হোমপেইজ ফিল্টার ইনিশিয়ালাইজেশন
+        initMainJumpFilter(); 
     }
     catch(error){
         console.error(error);
@@ -21,70 +69,111 @@ async function loadData(){
     }
 }
 
-// হোমপেইজের অধ্যায় ড্রপডাউন পপুলেট করা (ভূমিকা ও মুখবন্ধ বাদ দিয়ে)
+// Handle Language Switch
+function toggleLanguage() {
+    const selector = document.getElementById('langSelect');
+    currentLang = selector.value;
+    
+    // Toggle CSS Body Class for Fonts
+    if(currentLang === 'en') {
+        document.body.classList.add('lang-en');
+    } else {
+        document.body.classList.remove('lang-en');
+    }
+
+    applyLanguageUI();
+
+    // Re-render UI Components based on current view
+    if (document.getElementById('bookView').style.display !== 'none') {
+        renderIndex();
+        initMainJumpFilter();
+    } else if (currentChapter) {
+        renderChapter(currentChapter, true);
+    }
+}
+
+function applyLanguageUI() {
+    const text = UI[currentLang];
+    document.getElementById('loaderText').innerHTML = text.loaderText;
+    document.getElementById('heroTitle').innerHTML = text.heroTitle;
+    document.getElementById('heroSubtitle').innerHTML = text.heroSubtitle;
+    document.getElementById('indexHeader').innerText = text.indexHeader;
+    document.getElementById('jumpHeaderMain').innerText = text.jumpHeaderMain;
+    document.getElementById('btnGoMain').innerText = text.btnGo;
+    document.getElementById('btnGoChap').innerText = text.btnGoVerse;
+    document.getElementById('readingLayoutHeader').innerText = text.readingLayout;
+}
+
+// হোমপেইজের অধ্যায় ড্রপডাউন
 function initMainJumpFilter() {
     const mainChapSelect = document.getElementById('mainChapterSelect');
-    mainChapSelect.innerHTML = '<option value="">অধ্যায় নির্বাচন করুন</option>';
+    mainChapSelect.innerHTML = `<option value="">${UI[currentLang].optChap}</option>`;
     
+    // Reset Verse select
+    const mainVerseSelect = document.getElementById('mainVerseSelect');
+    mainVerseSelect.innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
+    mainVerseSelect.disabled = true;
+
+    const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
+
     appData.সূচীপত্র.forEach(item => {
-        // ভূমিকা এবং মুখবন্ধ অধ্যায় দুটিকে মেইন হোমপেইজ জাম্প ফিল্টারে আনা হবে না
         if (item['Chapter'] !== 'ভূমিকা' && item['Chapter'] !== 'মুখবন্ধ') {
             const option = document.createElement('option');
-            option.value = item['Chapter'];
-            option.textContent = item['Chapter'];
+            option.value = item['Chapter']; // Value always strict to Bengali SheetName
+            option.textContent = item[chapKey] || item['Chapter']; // Display text depends on Lang
             mainChapSelect.appendChild(option);
         }
     });
 }
 
-// অধ্যায় পরিবর্তনের ওপর ভিত্তি করে শ্লোক ড্রপডাউন আপডেট করা
 function populateVerses(type) {
-    if (type === 'main') {
-        const chapName = document.getElementById('mainChapterSelect').value;
-        const verseSelect = document.getElementById('mainVerseSelect');
-        
-        if (!chapName) {
-            verseSelect.innerHTML = '<option value="">শ্লোক নির্বাচন করুন</option>';
-            verseSelect.disabled = true;
-            return;
-        }
+    const chapName = type === 'main' ? document.getElementById('mainChapterSelect').value : currentChapter;
+    const verseSelect = document.getElementById(type === 'main' ? 'mainVerseSelect' : 'chapVerseSelect');
+    
+    if (!chapName) {
+        verseSelect.innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
+        if(type === 'main') verseSelect.disabled = true;
+        return;
+    }
 
-        const chapter = appData.chapters.find(item => item.sheetName === chapName);
-        verseSelect.innerHTML = '<option value="">শ্লোক নির্বাচন করুন</option>';
-        
-        if (chapter && chapter.verses) {
-            chapter.verses.forEach(v => {
-                const fullVerse = v['শ্লোক'] || '';
-                const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
-                const formattedVerse = verseOnly.replaceAll('_', ', ');
-                
-                const option = document.createElement('option');
-                option.value = fullVerse; 
-                option.textContent = `শ্লোক ${formattedVerse}`;
-                verseSelect.appendChild(option);
-            });
-            verseSelect.disabled = false;
-        }
+    const chapter = appData.chapters.find(item => item.sheetName === chapName);
+    verseSelect.innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
+    
+    if (chapter && chapter.verses) {
+        chapter.verses.forEach(v => {
+            // পরিবর্তন: ভাষা অনুযায়ী সঠিক কলাম (Key) নির্বাচন
+            const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
+            const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
+            const fullVerse = v[verseKey] || v[fallbackKey] || '';
+            if(!fullVerse) return;
+
+            const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
+            const formattedVerse = verseOnly.replaceAll('_', ', ');
+            
+            const option = document.createElement('option');
+            option.value = fullVerse; 
+            option.textContent = `${UI[currentLang].versePrefix} ${formattedVerse}`;
+            verseSelect.appendChild(option);
+        });
+        if(type === 'main') verseSelect.disabled = false;
     }
 }
 
-// নির্দিষ্ট শ্লোকে স্ক্রোল করে জাম্প করার ফাংশন
 function jumpToVerse(type) {
     let chapName, verseValue;
 
     if (type === 'main') {
         chapName = document.getElementById('mainChapterSelect').value;
         verseValue = document.getElementById('mainVerseSelect').value;
-        if (!chapName || !verseValue) return alert('দয়া করে অধ্যায় ও শ্লোক উভয়ই সিলেক্ট করুন।');
+        if (!chapName || !verseValue) return alert(UI[currentLang].alertBoth);
         
         renderChapter(chapName, true); 
     } else {
         chapName = currentChapter;
         verseValue = document.getElementById('chapVerseSelect').value;
-        if (!verseValue) return alert('দয়া করে শ্লোক সিলেক্ট করুন।');
+        if (!verseValue) return alert(UI[currentLang].alertVerse);
     }
 
-    // শ্লোক কার্ড খুঁজে বের করে স্ক্রোল করা
     setTimeout(() => {
         const targetCard = document.getElementById(`verse-${verseValue}`);
         if (targetCard) {
@@ -95,7 +184,7 @@ function jumpToVerse(type) {
     }, 500);
 }
 
-// অধ্যায়ের কলাম অনুযায়ী ডাইনামিকালি চেকবক্স তৈরি করার ফাংশন
+// চেকবক্স জেনারেট (ভাষা অনুযায়ী ফিল্টার করা)
 function createCheckboxesForChapter(chapter){
     const container = document.getElementById('checkboxContainer');
     container.innerHTML = '';
@@ -103,83 +192,77 @@ function createCheckboxesForChapter(chapter){
     if (!chapter.verses || chapter.verses.length === 0) return;
 
     const firstVerse = chapter.verses[0];
-    const fields = Object.keys(firstVerse).filter(key => key !== 'শ্লোক');
+    const allowedKeys = LANG_FIELDS[currentLang];
+    
+    // Find keys that exist in sheet AND match our current language allowed fields (exclude verse IDs)
+    const fields = Object.keys(firstVerse).filter(key => 
+        key !== 'শ্লোক' && key !== 'Verse' && allowedKeys.includes(key)
+    );
 
     fields.forEach(field => {
         const label = document.createElement('label');
+        
+        // পরিবর্তন: পাঠ বিন্যাসের চেকবক্স লেবেলে ইংরেজি মোডে 'সংষ্কৃতম্' এর বদলে 'Sanskrit' দেখানোর জন্য
+        const displayCheckboxLabel = (currentLang === 'en' && field === 'সংষ্কৃতম্') ? 'Sanskrit' : field;
+        
         label.innerHTML = `
             <input type="checkbox" value="${field}" checked>
-            <span>${field}</span>
+            <span>${displayCheckboxLabel}</span>
         `;
         container.appendChild(label);
     });
 }
 
 function getSelectedFields(){
-    return [
-        ...document.querySelectorAll('#checkboxContainer input:checked')
-    ].map(el => el.value);
+    return [...document.querySelectorAll('#checkboxContainer input:checked')].map(el => el.value);
 }
 
-// মেইন সূচীপত্র রেন্ডারিং (আপডেটেড ফরম্যাট)
+// সূচীপত্র রেন্ডারিং (আপডেট করা হয়েছে)
 function renderIndex(){
     const container = document.getElementById('indexContainer');
     container.innerHTML = '';
+
+    const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
+    const nameKey = currentLang === 'en' ? 'Name(En)' : 'Name';
 
     appData.সূচীপত্র.forEach(item => {
         const card = document.createElement('div');
         card.className = 'index-item';
 
-        let titleText = '';
-        let extraFields = '';
+        const displayChap = item[chapKey] || item['Chapter'] || '';
+        const displayName = item[nameKey] || '';
 
-        // ভূমিকা বা মুখবন্ধ হলে সরাসরি নাম দেখাবে, অন্যথায় "অধ্যায় X : নাম" ফরম্যাট হবে
+        let titleText = '';
+
         if (item['Chapter'] === 'ভূমিকা' || item['Chapter'] === 'মুখবন্ধ') {
-            titleText = item['Chapter'];
-        } else if (item['Chapter'] && item['Name']) {
-            titleText = `${item['Chapter']} : ${item['Name']}`;
+            titleText = displayChap;
+        } else if (displayChap && displayName) {
+            titleText = `${displayChap} : ${displayName}`;
         } else {
-            titleText = item['Chapter'] || '';
+            titleText = displayChap;
         }
 
-        // ইনডেক্স কার্ডের নিচে শুধুমাত্র Name দেখাবে (যদি আলাদাভাবে দেখাতে চান), Details বাদ দেওয়া হয়েছে।
-        // যেহেতু নাম উপরেই টাইটেলে চলে গেছে, তাই এক্সট্রা ফিল্ডে 'Name' এবং 'Details' দুটাই বাদ দেওয়া হলো।
-        Object.keys(item).forEach(key => {
-            if(key !== 'Chapter' && key !== 'Name' && key !== 'Details' && item[key]){
-                extraFields += `<div>${item[key]}</div>`;
-            }
-        });
-
-        card.innerHTML = `
-            <h3>${titleText}</h3>
-            ${extraFields ? `<div class="index-extra">${extraFields}</div>` : ''}
-        `;
+        card.innerHTML = `<h3>${titleText}</h3>`;
 
         card.addEventListener('click', () => {
-            renderChapter(item['Chapter'], true); 
+            renderChapter(item['Chapter'], true); // Always pass the internal base Chapter name
         });
 
         container.appendChild(card);
     });
 }
 
-// অধ্যায় রেন্ডারিং হ্যান্ডলার
 function renderChapter(chapterName, isFirstLoad = false){
     currentChapter = chapterName;
-    const chapter = appData.chapters.find(
-        item => item.sheetName === chapterName
-    );
-
+    const chapter = appData.chapters.find(item => item.sheetName === chapterName);
     if(!chapter) return;
 
     document.getElementById('bookView').style.display = 'none';
     document.getElementById('chapterView').style.display = 'block';
 
-    // এলিমেন্টগুলো সিলেক্ট করা
-    const checkboxControls = document.querySelector('.controls');
-    const chapterJumpControls = document.querySelector('.chapter-jump');
+    const checkboxControls = document.getElementById('checkboxControls');
+    const chapterJumpControls = document.getElementById('chapJumpContainer');
 
-    // ভূমিকা অথবা মুখবন্ধ হলে পাঠ বিন্যাস ও শ্লোক জাম্প সেকশন হাইড হবে
     if (chapterName === 'ভূমিকা' || chapterName === 'মুখবন্ধ') {
         if (checkboxControls) checkboxControls.style.display = 'none';
         if (chapterJumpControls) chapterJumpControls.style.display = 'none';
@@ -188,7 +271,6 @@ function renderChapter(chapterName, isFirstLoad = false){
         if (chapterJumpControls) chapterJumpControls.style.display = 'block';
     }
 
-    // নতুন অধ্যায় প্রথমবার লোড হলে চেকবক্স তৈরি হবে (ভূমিকা/মুখবন্ধ বাদে)
     if (isFirstLoad && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
         createCheckboxesForChapter(chapter);
         
@@ -209,22 +291,10 @@ function renderChapter(chapterName, isFirstLoad = false){
     renderVerses(chapter);
     renderChapterNavigation(chapterName);
 
-    // অধ্যায়ের ভেতরের শ্লোক ড্রপডাউন পপুলেট করা (ভূমিকা/মুখবন্ধ বাদে)
+    // Populate inner chapter select
     const chapVerseSelect = document.getElementById('chapVerseSelect');
-    if (chapVerseSelect) {
-        chapVerseSelect.innerHTML = '<option value="">শ্লোক নির্বাচন করুন</option>';
-        if (chapter.verses && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
-            chapter.verses.forEach(v => {
-                const fullVerse = v['শ্লোক'] || '';
-                const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
-                const formattedVerse = verseOnly.replaceAll('_', ', ');
-                
-                const option = document.createElement('option');
-                option.value = fullVerse;
-                option.textContent = `শ্লোক ${formattedVerse}`;
-                chapVerseSelect.appendChild(option);
-            });
-        }
+    if (chapVerseSelect && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
+        populateVerses('chap');
     }
 
     if (document.activeElement.tagName !== 'BUTTON') {
@@ -234,35 +304,28 @@ function renderChapter(chapterName, isFirstLoad = false){
 
 function renderChapterHeader(chapterName){
     const header = document.getElementById('chapterHeader');
-    const chapterIndexData = appData.সূচীপত্র.find(
-        item => item['Chapter'] === chapterName
-    );
+    const chapterIndexData = appData.সূচীপত্র.find(item => item['Chapter'] === chapterName);
 
-    let metaHTML = '';
-    if(chapterIndexData){
-        Object.keys(chapterIndexData).forEach(key => {
-            if(key !== 'Chapter' && chapterIndexData[key]){
-                metaHTML += `<div>${chapterIndexData[key]}</div>`;
-            }
-        });
-    }
+    const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
+    const descKey = currentLang === 'en' ? 'Details(En)' : 'Details';
+
+    const displayTitle = chapterIndexData ? (chapterIndexData[chapKey] || chapterName) : chapterName;
+    const displayDesc = chapterIndexData ? (chapterIndexData[descKey] || '') : '';
 
     header.innerHTML = `
         <button class="back-btn" onclick="backToIndex()">
-            ← সূচীপত্রে ফিরে যান
+            ${UI[currentLang].backBtn}
         </button>
-        <h2>${chapterName}</h2>
-        <div class="chapter-meta">${metaHTML}</div>
+        <h2>${displayTitle}</h2>
+        ${displayDesc ? `<div class="chapter-meta">${displayDesc}</div>` : ''}
     `;
 }
 
 function renderVerses(chapter){
-    // ভূমিকা বা মুখবন্ধ হলে সব ফিল্ড ডাইনামিকালি সিলেক্টেড থাকবে (যেহেতু চেকবক্স নেই)
     let selectedFields = [];
     if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
-        if (chapter.verses && chapter.verses.length > 0) {
-            selectedFields = Object.keys(chapter.verses[0]).filter(key => key !== 'শ্লোক');
-        }
+        const specialKey = currentLang === 'en' ? (currentChapter === 'ভূমিকা' ? 'Introduction' : 'Preface') : (currentChapter === 'ভূমিকা' ? 'ভূমিকা' : 'মুখবন্ধ');
+        selectedFields = [specialKey];
     } else {
         selectedFields = getSelectedFields();
     }
@@ -270,26 +333,26 @@ function renderVerses(chapter){
     const container = document.getElementById('versesContainer');
     container.innerHTML = '';
 
-    chapter.verses.forEach(verse => {
+    chapter.verses.forEach((verse, index) => {
         const card = document.createElement('div');
         
-        // ভূমিকা বা মুখবন্ধ হলে বিশেষ CSS ক্লাস এবং জাস্টিফাই সেট করার লজিক
         if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
             card.className = 'verse-card special-page';
         } else {
             card.className = 'verse-card';
         }
         
-        const fullVerse = verse['শ্লোক'] || '';
+        // পরিবর্তন: ভাষা অনুযায়ী কার্ড আইডি এবং শ্লোক নম্বর নির্ধারণ যেন ইংরেজিতে ইংরেজি সংখ্যা (01) আসে
+        const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
+        const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
+        const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
         card.id = `verse-${fullVerse}`; 
 
-        const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
-        const formattedVerse = verseOnly.replaceAll('_', ', ');
-
-        // ভূমিকা বা মুখবন্ধ হলেカードে "শ্লোক X" শব্দটি বসবে না
         let html = '';
-        if (currentChapter !== 'ভূমিকা' && currentChapter !== 'মুখবন্ধ') {
-            html = `<div class="verse-number">শ্লোক ${formattedVerse}</div>`;
+        if (currentChapter !== 'ভূমিকা' && currentChapter !== 'মুখবন্ধ' && (verse['শ্লোক'] || verse['Verse'])) {
+            const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
+            const formattedVerse = verseOnly.replaceAll('_', ', ');
+            html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
         }
 
         selectedFields.forEach(field => {
@@ -298,37 +361,29 @@ function renderVerses(chapter){
                 let showTitle = true; 
                 let content = verse[field];
 
-                if(field === 'সংষ্কৃতম্'){ 
-                    extraClass = 'sanskrit'; 
-                    showTitle = false; 
-                }
-                else if(field === 'English Transliteration'){ extraClass = 'english-transliteration'; }
-                else if(field === 'English Translation'){ extraClass = 'english-text'; }
-                else if(field === 'উচ্চারণ'){ 
-                    extraClass = 'bangla-transliteration'; 
-                    showTitle = false; 
-                }
-                else if(field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
-                else if(field === 'শব্দার্থ'){ 
+                // পরিবর্তন: শ্লোক কার্ডের ভেতরে কোনো মোডেই (বাংলা/ইংরেজি) 'সংষ্কৃতম্' এর জন্য হেডিং টাইটেল দেখাবে না
+                if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
+                else if(field === 'Transliteration' || field === 'উচ্চারণ'){ extraClass = 'bangla-transliteration'; showTitle = false; }
+                else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
+                else if(field === 'শব্দার্থ' || field === 'Synonyms'){ 
                     extraClass = 'word-meanings'; 
+                    
+                    // ফিল্ড অনুযায়ী বিভাজক (Separator) নির্ধারণ
+                    const separator = field === 'শব্দার্থ' ? '-' : '—';
+                    
                     content = content.split(';').map(part => {
-                        if (part.includes('-')) {
-                            const index = part.indexOf('-');
-                            const word = part.substring(0, index);
-                            const meaning = part.substring(index); 
-                            return `<strong>${word}</strong>${meaning}`;
+                        if (part.includes(separator)) {
+                            const idx = part.indexOf(separator);
+                            return `<strong>${part.substring(0, idx)}</strong>${part.substring(idx)}`;
                         }
                         return part;
                     }).join(';');
                 }
                 else if(field.includes('গীতার') && field.includes('গান')){ extraClass = 'gitar-gaan-text'; }
-                else if(field.trim() === 'তাৎপর্য'){ extraClass = 'purport-text'; }
+                else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
                 else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
 
-                // ভূমিকা বা মুখবন্ধ হলে ফিল্ডের কলাম টাইটেলগুলোও দেখানোর প্রয়োজন নেই
-                if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
-                    showTitle = false;
-                }
+                if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') { showTitle = false; }
 
                 html += `
                     <div class="field">
@@ -353,21 +408,24 @@ function renderChapterNavigation(chapterName) {
     const nextChapterItem = appData.সূচীপত্র[currentIndex + 1];
 
     let html = '';
+    const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
 
     if (prevChapterItem && prevChapterItem['Chapter']) {
-        const prevChapterName = prevChapterItem['Chapter'];
+        const prevRefName = prevChapterItem['Chapter'];
+        const prevDispName = prevChapterItem[chapKey] || prevRefName;
         html += `
-            <button class="nav-btn prev-chap-btn" onclick="renderChapter('${prevChapterName}', true)">
-                ← পূর্ববর্তী: ${prevChapterName}
+            <button class="nav-btn prev-chap-btn" onclick="renderChapter('${prevRefName}', true)">
+                ${UI[currentLang].prevBtnText}: ${prevDispName}
             </button>
         `;
     }
 
     if (nextChapterItem && nextChapterItem['Chapter']) {
-        const nextChapterName = nextChapterItem['Chapter'];
+        const nextRefName = nextChapterItem['Chapter'];
+        const nextDispName = nextChapterItem[chapKey] || nextRefName;
         html += `
-            <button class="nav-btn next-chap-btn" onclick="renderChapter('${nextChapterName}', true)">
-                পরবর্তী: ${nextChapterName} →
+            <button class="nav-btn next-chap-btn" onclick="renderChapter('${nextRefName}', true)">
+                ${UI[currentLang].nextBtnText}: ${nextDispName}
             </button>
         `;
     }
@@ -379,8 +437,12 @@ function backToIndex(){
     document.getElementById('chapterView').style.display = 'none';
     document.getElementById('bookView').style.display = 'block';
     
+    // সমাধান: ইন্ডেক্স পেজে ফেরার সময় বর্তমান ভাষা অনুযায়ী রি-রেন্ডার করা
+    renderIndex();
+    initMainJumpFilter();
+    
     document.getElementById('mainChapterSelect').value = "";
-    document.getElementById('mainVerseSelect').innerHTML = '<option value="">শ্লোক নির্বাচন করুন</option>';
+    document.getElementById('mainVerseSelect').innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
     document.getElementById('mainVerseSelect').disabled = true;
 
     window.scrollTo({ top:0, behavior:'smooth' });
