@@ -817,6 +817,31 @@ body {
 .checkbox-grid{ display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 10px; }
 .checkbox-grid label{ background: #f3e5c5; padding: 10px 12px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer;}
 
+/* View Mode Tabs: সাধারণ / বিস্তারিত / দ্বৈত ভাষা (Default / Advanced / Dual language) */
+.view-mode-tabs{ display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.view-mode-btn{ background: #f3e5c5; color: #6d421c; border: 1px solid rgba(80,50,20,0.2); padding: 10px 20px; border-radius: 999px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+.view-mode-btn:hover{ background: #ead8b1; }
+.view-mode-btn.active{ background: #6d421c; color: #fff; border-color: #6d421c; box-shadow: 0 2px 6px rgba(109,66,28,0.25); }
+
+/* দ্বৈত ভাষা (Dual language) verse layout: বাংলা ও ইংরেজি পাশাপাশি */
+.dual-lang-row{ display: flex; gap: 18px; width: 100%; align-items: flex-start; }
+.lang-col{ flex: 1 1 0; min-width: 0; }
+.lang-col-bn{ padding-right: 14px; border-right: 1px solid rgba(80,50,20,0.15); }
+.lang-col-en{ padding-left: 14px; }
+
+/* ইংরেজি মোডেও দ্বৈত ভাষা ভিউয়ের বাংলা অংশ (টাইটেল + কনটেন্ট, ভেতরের সব ট্যাগ যেমন <strong> সহ) সবসময়
+   Kalpurush ফন্টে দেখাবে, আর ইংরেজি অংশ তার নিজস্ব ফন্টেই থাকবে — মোবাইল ও ডেস্কটপ উভয় ক্ষেত্রেই কার্যকর */
+body.lang-en .verse-card.dual-verse-card .lang-col-bn,
+body.lang-en .verse-card.dual-verse-card .lang-col-bn *,
+body.lang-en .verse-card.dual-verse-card .field-title .bn-part,
+body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
+    font-family: 'Kalpurush', Arial, sans-serif !important;
+}
+body.lang-en .verse-card.dual-verse-card .lang-col-en,
+body.lang-en .verse-card.dual-verse-card .lang-col-en * {
+    font-family: 'Times New Roman', 'Cinzel', serif !important;
+}
+
 /* ==========================================================================
    JUMP FILTER STYLES
    ========================================================================== */
@@ -886,6 +911,11 @@ body {
     .jump-filter-container { padding: 14px; margin-bottom: 18px; }
     .filter-controls { flex-direction: column; gap: 10px; }
     .filter-controls select, .jump-btn { width: 100% !important; min-width: 100%; text-align: center; }
+    .view-mode-tabs{ gap: 8px; }
+    .view-mode-btn{ flex: 1 1 auto; padding: 10px 10px; font-size: 0.85rem; }
+    .dual-lang-row{ flex-direction: column; gap: 12px; }
+    .lang-col-bn{ border-right: none; border-bottom: 1px solid rgba(80,50,20,0.15); padding-right: 0; padding-bottom: 12px; }
+    .lang-col-en{ padding-left: 0; }
 }
 
 /* ==========================================================================
