@@ -899,7 +899,7 @@ body.lang-en .verse-card.dual-verse-card .lang-col-en * {
 .verse-card.special-page .field-content .center-text { text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important; }
 
 /* ==========================================================================
-   10. RESPONSIVE DESIGN
+   10. RESPONSIVE DESIGN (Slightly Adjusted for Mobile Grid & Side-by-Side Dual Lang)
    ========================================================================== */
 @media(max-width:768px){
     .lang-switcher { justify-content: center; margin-bottom: 5px; }
@@ -913,9 +913,27 @@ body.lang-en .verse-card.dual-verse-card .lang-col-en * {
     .filter-controls select, .jump-btn { width: 100% !important; min-width: 100%; text-align: center; }
     .view-mode-tabs{ gap: 8px; }
     .view-mode-btn{ flex: 1 1 auto; padding: 10px 10px; font-size: 0.85rem; }
-    .dual-lang-row{ flex-direction: column; gap: 12px; }
-    .lang-col-bn{ border-right: none; border-bottom: 1px solid rgba(80,50,20,0.15); padding-right: 0; padding-bottom: 12px; }
-    .lang-col-en{ padding-left: 0; }
+
+    /* ১. চেকবক্সকে মোবাইল পোট্রেট মোডেও জোরপূর্বক ২-কলাম গ্রিড ভিউ রাখার জন্য */
+    .checkbox-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px;
+    }
+
+    /* ২. দ্বৈত ভাষা ভিউ মোবাইল পোট্রেটেও পাশাপাশি (Side-by-Side) রাখার জন্য */
+    .dual-lang-row { 
+        flex-direction: row !important; 
+        gap: 10px; 
+    }
+    .lang-col-bn { 
+        border-right: 1px solid rgba(80,50,20,0.15) !important; 
+        border-bottom: none !important; 
+        padding-right: 10px; 
+        padding-bottom: 0 !important; 
+    }
+    .lang-col-en { 
+        padding-left: 10px; 
+    }
 }
 
 /* ==========================================================================
