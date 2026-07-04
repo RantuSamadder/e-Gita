@@ -1,4 +1,13 @@
 /* ==========================================================================
+   0. CSS ARCHITECTURE VARIABLES
+   ========================================================================== */
+:root {
+    --bengali-font: 'Kalpurush', Arial, sans-serif;
+    --verse-text-size: 1.15rem;      /* Unified font size for all textual contents (EN/BN/Synonyms/Purport) */
+    --verse-sanskrit-size: 1.45rem;  /* Optimized for Devanagari script legibility and visual weight */
+}
+
+/* ==========================================================================
    1. GLOBAL FONTS & BASIC RESET
    ========================================================================== */
 @font-face {
@@ -199,22 +208,22 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 .verse-number { font-size: 1.3rem; color: #6d421c; margin-bottom: 14px; font-weight: bold; text-align: center; }
 .field { margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; width: 100%; }
 .field-title { color: #7a4b1f; margin-bottom: 4px; font-weight: bold; font-size: 0.95rem; text-align: center; letter-spacing: 0.5px; }
-.field-content { white-space: pre-wrap; font-size: 1.15rem; width: 100%; line-height: 1.8; }
+.field-content { white-space: pre-wrap; font-size: var(--verse-text-size); width: 100%; line-height: 1.8; }
 
 /* ==========================================================================
-   7. TARGETED LANGUAGES & ALIGNMENTS (DESKTOP VISUAL BALANCE FIXED)
+   7. TARGETED LANGUAGES & ALIGNMENTS (UNIFIED VISUAL BALANCE)
    ========================================================================== */
-.sanskrit, [class*="sanskrit"] { font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important; font-size: 1.75rem !important; line-height: 2.0 !important; color: #4f2f12 !important; font-weight: bold !important; text-align: center !important; width: 100% !important; display: block !important; }
-.bangla-transliteration, [class*="transliteration"] { text-align: center !important; font-weight: bold !important; font-size: 1.25rem !important; line-height: 1.8 !important; width: 100% !important; display: block !important; }
-.gitar-gaan-text, [class*="gitar-gaan"] { text-align: center !important; display: block !important; width: 100% !important; font-size: 1.15rem !important; line-height: 1.7 !important; }
-.bangla-text, [class*="bangla-text"] { text-align: left !important; font-size: 1.15rem !important; line-height: 1.9 !important; display: block !important; width: 100% !important; }
-.purport-text, [class*="purport"] { text-align: justify !important; text-justify: inter-word !important; display: block !important; width: 100% !important; font-size: 1.15rem !important; line-height: 1.8 !important; }
+.sanskrit, [class*="sanskrit"] { font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important; font-size: var(--verse-sanskrit-size) !important; line-height: 2.0 !important; color: #4f2f12 !important; font-weight: bold !important; text-align: center !important; width: 100% !important; display: block !important; }
+.bangla-transliteration, [class*="transliteration"] { text-align: center !important; font-weight: bold !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; width: 100% !important; display: block !important; }
+.gitar-gaan-text, [class*="gitar-gaan"] { text-align: center !important; display: block !important; width: 100% !important; font-size: var(--verse-text-size) !important; line-height: 1.7 !important; }
+.bangla-text, [class*="bangla-text"] { text-align: left !important; font-size: var(--verse-text-size) !important; line-height: 1.9 !important; display: block !important; width: 100% !important; }
+.purport-text, [class*="purport"] { text-align: justify !important; text-justify: inter-word !important; display: block !important; width: 100% !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; }
 .center-text { text-align: center !important; display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; line-height: 1.8 !important; }
-.word-meanings, [class*="word-meanings"] { text-align: justify !important; font-size: 1.12rem !important; line-height: 1.8 !important; display: block !important; width: 100% !important; color: #3d2f1d !important; }
+.word-meanings, [class*="word-meanings"] { text-align: justify !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; display: block !important; width: 100% !important; color: #3d2f1d !important; }
 .word-meanings strong { color: #6d421c; font-weight: 700; }
 
-/* English text size is set to 1.22rem to visually match Kalpurush 1.15rem */
-.english-text { text-align: left !important; font-size: 1.22rem !important; line-height: 1.8 !important; }
+/* English text size perfectly matches the global custom property scale */
+.english-text { text-align: left !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; }
 
 /* ==========================================================================
    8. FOOTER & NAVIGATION BOTTOM LAYOUT
@@ -232,26 +241,22 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
    9. SPECIAL PAGES STYLES
    ========================================================================== */
 .verse-card.special-page { border-left: 4px solid #6d421c !important; padding: 24px !important; }
-.verse-card.special-page .field-content { text-align: justify !important; text-justify: inter-word !important; font-size: 1.15rem !important; line-height: 1.85 !important; color: #2f2417 !important; display: block !important; width: 100% !important; }
+.verse-card.special-page .field-content { text-align: justify !important; text-justify: inter-word !important; font-size: var(--verse-text-size) !important; line-height: 1.85 !important; color: #2f2417 !important; display: block !important; width: 100% !important; }
 .verse-card.special-page .field, .verse-card.special-page .field-content * { text-align: justify !important; align-items: flex-start !important; }
 .verse-card.special-page .field-content .center-text { text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important; }
 
 /* ==========================================================================
-   10. RESPONSIVE DESIGN (MOBILE FONT SIZES FULLY FIXED)
+   10. RESPONSIVE DESIGN (MOBILE FONT SIZES FULLY AUTOMATED)
    ========================================================================== */
 @media(max-width:768px){
+    :root {
+        --verse-text-size: 1.05rem;     /* Synchronized scaling across all cards on mobile */
+        --verse-sanskrit-size: 1.35rem; /* Proportional scale-down for mobile sanskrit */
+    }
+
     .lang-switcher { justify-content: center; margin-bottom: 5px; }
     .hero h1 { font-size: 2.2rem; }
     .chapter-header h2 { font-size: 1.7rem; }
-    
-    /* Mobile Font Scaling for all text elements */
-    .sanskrit, [class*="sanskrit"] { font-size: 1.45rem !important; line-height: 2 !important; }
-    .bangla-text, [class*="bangla-text"], .purport-text, [class*="purport"] { font-size: 1.05rem !important; }
-    .english-text { font-size: 1.1rem !important; } /* Balanced for mobile serif */
-    .bangla-transliteration, [class*="transliteration"] { font-size: 1.15rem !important; }
-    .gitar-gaan-text, [class*="gitar-gaan"] { font-size: 1.05rem !important; }
-    .word-meanings, [class*="word-meanings"] { font-size: 1.02rem !important; }
-    .field-content { font-size: 1.05rem !important; }
 
     .book-view, .controls, .chapter-header, .chapter-nav, .verse-card { padding: 18px; }
     .jump-filter-container { padding: 14px; margin-bottom: 18px; }
@@ -295,9 +300,4 @@ body.lang-en .verse-card .bangla-text,
 body.lang-en .verse-card .bangla-transliteration,
 body.lang-en .verse-card .gitar-gaan-text {
     font-family: 'Kalpurush', Arial, sans-serif !important;
-}
-
-@charset "UTF-8";
-:root {
-    --bengali-font: 'Kalpurush', Arial, sans-serif;
 }
