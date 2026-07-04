@@ -1,8 +1,9 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbzDO8jWrQxRI1xcTRI2EuKFkxyhxSEFwZq1TQmrCJpH3A2blnfrD8On-7grv-sIkSs3/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzCWcQgCbcKQMlMBC85nLYBN7Vskwsd0CeAd5H1jqvXBmGzPOKMdgebf_AlYwiz56hK/exec';
 
 let appData = null;
 let currentChapter = null; // Internal Bengali sheet name indicator
 let currentLang = 'bn'; // 'bn' or 'en'
+let viewMode = 'default'; // 'default' | 'advanced' | 'dual'
 
 // UI Texts for Translation
 const UI = {
@@ -17,6 +18,9 @@ const UI = {
         btnGo: "যান →",
         btnGoVerse: "শ্লোকে যান",
         readingLayout: "পাঠ বিন্যাস",
+        viewModeDefault: "সাধারণ",
+        viewModeAdvanced: "বিস্তারিত",
+        viewModeDual: "দ্বৈত ভাষা",
         backBtn: "← সূচীপত্রে ফিরে যান",
         versePrefix: "শ্লোক",
         prevBtnText: "← পূর্ববর্তী",
@@ -35,6 +39,9 @@ const UI = {
         btnGo: "Go →",
         btnGoVerse: "Go to Verse",
         readingLayout: "Reading Layout",
+        viewModeDefault: "Default View",
+        viewModeAdvanced: "Advanced View",
+        viewModeDual: "Dual language View",
         backBtn: "← Back to Index",
         versePrefix: "Verse",
         prevBtnText: "← Previous",
@@ -49,6 +56,22 @@ const LANG_FIELDS = {
     bn: ['শ্লোক', 'সংষ্কৃতম্', 'উচ্চারণ', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ'],
     en: ['Verse', 'সংষ্কৃতম্', 'Transliteration', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface']
 };
+
+// Fixed fields shown in "সাধারণ / Default View" (no checkboxes)
+const DEFAULT_VIEW_FIELDS = {
+    bn: ['উচ্চারণ', 'অনুবাদ'],
+    en: ['Transliteration', 'Translation']
+};
+
+// Combined (Bengali + English) field groups for "দ্বৈত ভাষা / Dual language View".
+// 'গীতার গান' is intentionally excluded here, as it has no English counterpart.
+const DUAL_FIELD_GROUPS = [
+    { id: 'সংষ্কৃতম্', bnKey: 'সংষ্কৃতম্', enKey: 'সংষ্কৃতম্', shared: true, labelBn: 'সংষ্কৃতম্', labelEn: 'Sanskrit' },
+    { id: 'উচ্চারণ', bnKey: 'উচ্চারণ', enKey: 'Transliteration', labelBn: 'উচ্চারণ', labelEn: 'Transliteration' },
+    { id: 'শব্দার্থ', bnKey: 'শব্দার্থ', enKey: 'Synonyms', labelBn: 'শব্দার্থ', labelEn: 'Synonyms' },
+    { id: 'অনুবাদ', bnKey: 'অনুবাদ', enKey: 'Translation', labelBn: 'অনুবাদ', labelEn: 'Translation' },
+    { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য', labelEn: 'Purport' }
+];
 
 async function loadData(){
     try{
@@ -101,7 +124,13 @@ function applyLanguageUI() {
     document.getElementById('jumpHeaderMain').innerText = text.jumpHeaderMain;
     document.getElementById('btnGoMain').innerText = text.btnGo;
     document.getElementById('btnGoChap').innerText = text.btnGoVerse;
-    document.getElementById('readingLayoutHeader').innerText = text.readingLayout;
+
+    const defaultTab = document.querySelector('.view-mode-btn[data-mode="default"]');
+    const advancedTab = document.querySelector('.view-mode-btn[data-mode="advanced"]');
+    const dualTab = document.querySelector('.view-mode-btn[data-mode="dual"]');
+    if (defaultTab) defaultTab.textContent = text.viewModeDefault;
+    if (advancedTab) advancedTab.textContent = text.viewModeAdvanced;
+    if (dualTab) dualTab.textContent = text.viewModeDual;
 }
 
 // হোমপেইজের অধ্যায় ড্রপডাউন
@@ -217,6 +246,76 @@ function getSelectedFields(){
     return [...document.querySelectorAll('#checkboxContainer input:checked')].map(el => el.value);
 }
 
+// চেকবক্স জেনারেট - দ্বৈত ভাষা (Dual language) মোডের জন্য কম্বাইন করা অপশন
+function createDualCheckboxesForChapter(chapter){
+    const container = document.getElementById('checkboxContainer');
+    container.innerHTML = '';
+
+    if (!chapter.verses || chapter.verses.length === 0) return;
+
+    const firstVerse = chapter.verses[0];
+
+    DUAL_FIELD_GROUPS.forEach(group => {
+        const hasField = group.shared
+            ? !!firstVerse[group.bnKey]
+            : !!(firstVerse[group.bnKey] || firstVerse[group.enKey]);
+        if (!hasField) return;
+
+        const label = document.createElement('label');
+        const displayLabel = currentLang === 'en' ? group.labelEn : group.labelBn;
+
+        label.innerHTML = `
+            <input type="checkbox" value="${group.id}" checked>
+            <span>${displayLabel}</span>
+        `;
+        container.appendChild(label);
+    });
+}
+
+// বর্তমান ভিউ মোড (সাধারণ/বিস্তারিত/দ্বৈত ভাষা) অনুযায়ী নিয়ন্ত্রণ (checkbox) অংশ তৈরি
+function buildControlsForChapter(chapter){
+    if (viewMode === 'advanced') {
+        createCheckboxesForChapter(chapter);
+    } else if (viewMode === 'dual') {
+        createDualCheckboxesForChapter(chapter);
+    } else {
+        document.getElementById('checkboxContainer').innerHTML = '';
+    }
+    updateViewModeUI();
+}
+
+// ভিউ মোড ট্যাব বাটনের সক্রিয় অবস্থা এবং চেকবক্স গ্রিডের দৃশ্যমানতা আপডেট
+function updateViewModeUI(){
+    document.querySelectorAll('.view-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === viewMode);
+    });
+
+    const checkboxContainer = document.getElementById('checkboxContainer');
+    if (checkboxContainer) {
+        checkboxContainer.style.display = (viewMode === 'default') ? 'none' : '';
+    }
+}
+
+// ভিউ মোড পরিবর্তন হ্যান্ডলার (সাধারণ / বিস্তারিত / দ্বৈত ভাষা)
+function setViewMode(mode){
+    if (viewMode === mode) return;
+    viewMode = mode;
+
+    if (!currentChapter || currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
+        updateViewModeUI();
+        return;
+    }
+
+    const chapter = appData.chapters.find(item => item.sheetName === currentChapter);
+    if (!chapter) return;
+
+    buildControlsForChapter(chapter);
+
+    const scrollY = window.scrollY;
+    renderVerses(chapter);
+    window.scrollTo(0, scrollY);
+}
+
 // সূচীপত্র রেন্ডারিং (আপডেট করা হয়েছে)
 function renderIndex(){
     const container = document.getElementById('indexContainer');
@@ -272,7 +371,7 @@ function renderChapter(chapterName, isFirstLoad = false){
     }
 
     if (isFirstLoad && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
-        createCheckboxesForChapter(chapter);
+        buildControlsForChapter(chapter);
         
         const container = document.getElementById('checkboxContainer');
         container.onchange = (e) => {
@@ -322,16 +421,24 @@ function renderChapterHeader(chapterName){
 }
 
 function renderVerses(chapter){
+    const container = document.getElementById('versesContainer');
+    container.innerHTML = '';
+
+    // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
+    if (currentChapter !== 'ভূমিকা' && currentChapter !== 'মুখবন্ধ' && viewMode === 'dual') {
+        renderVersesDual(chapter, container);
+        return;
+    }
+
     let selectedFields = [];
     if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
         const specialKey = currentLang === 'en' ? (currentChapter === 'ভূমিকা' ? 'Introduction' : 'Preface') : (currentChapter === 'ভূমিকা' ? 'ভূমিকা' : 'মুখবন্ধ');
         selectedFields = [specialKey];
+    } else if (viewMode === 'default') {
+        selectedFields = currentLang === 'en' ? DEFAULT_VIEW_FIELDS.en : DEFAULT_VIEW_FIELDS.bn;
     } else {
         selectedFields = getSelectedFields();
     }
-
-    const container = document.getElementById('versesContainer');
-    container.innerHTML = '';
 
     chapter.verses.forEach((verse, index) => {
         const card = document.createElement('div');
@@ -392,6 +499,79 @@ function renderVerses(chapter){
                     </div>
                 `;
             }
+        });
+
+        card.innerHTML = html;
+        container.appendChild(card);
+    });
+}
+
+// দ্বৈত ভাষা (Dual language) মোডের রেন্ডারিং: বাংলা ও ইংরেজি পাশাপাশি
+function renderVersesDual(chapter, container){
+    const selectedGroupIds = getSelectedFields();
+    const selectedGroups = DUAL_FIELD_GROUPS.filter(g => selectedGroupIds.includes(g.id));
+
+    const formatSynonyms = (content, separator) => content.split(';').map(part => {
+        if (part.includes(separator)) {
+            const idx = part.indexOf(separator);
+            return `<strong>${part.substring(0, idx)}</strong>${part.substring(idx)}`;
+        }
+        return part;
+    }).join(';');
+
+    chapter.verses.forEach((verse, index) => {
+        const card = document.createElement('div');
+        card.className = 'verse-card dual-verse-card';
+
+        // পরিবর্তন: ভাষা অনুযায়ী সঠিক কলাম থেকে শ্লোক নম্বর নেওয়া হচ্ছে, যেন ইংরেজি মোডে ইংরেজি সংখ্যা (01) দেখায়
+        const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
+        const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
+        const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
+        card.id = `verse-${fullVerse}`;
+
+        let html = '';
+        if (verse['শ্লোক'] || verse['Verse']) {
+            const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
+            const formattedVerse = verseOnly.replaceAll('_', ', ');
+            html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
+        }
+
+        selectedGroups.forEach(group => {
+            if (group.shared) {
+                const content = verse[group.bnKey];
+                if (!content) return;
+                html += `
+                    <div class="field">
+                        <div class="field-content sanskrit">${content}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const bnContent = verse[group.bnKey];
+            const enContent = verse[group.enKey];
+            if (!bnContent && !enContent) return;
+
+            let extraClass = '';
+            // পরিবর্তন: 'উচ্চারণ / Transliteration' এর জন্য কোনো টাইটেল দেখাবে না (একক ভাষার ভিউয়ের মতোই)
+            const showTitle = group.id !== 'উচ্চারণ';
+            if (group.id === 'উচ্চারণ') extraClass = 'bangla-transliteration';
+            else if (group.id === 'অনুবাদ') extraClass = 'bangla-text';
+            else if (group.id === 'তাৎপর্য') extraClass = 'purport-text';
+            else if (group.id === 'শব্দার্থ') extraClass = 'word-meanings';
+
+            const bnDisplay = (group.id === 'শব্দার্থ' && bnContent) ? formatSynonyms(bnContent, '-') : bnContent;
+            const enDisplay = (group.id === 'শব্দার্থ' && enContent) ? formatSynonyms(enContent, '—') : enContent;
+
+            html += `
+                <div class="field dual-field">
+                    ${showTitle ? `<div class="field-title"><span class="bn-part">${group.labelBn}</span> ~ ${group.labelEn}</div>` : ''}
+                    <div class="dual-lang-row">
+                        ${bnContent ? `<div class="lang-col lang-col-bn field-content ${extraClass}">${bnDisplay}</div>` : ''}
+                        ${enContent ? `<div class="lang-col lang-col-en field-content ${extraClass}">${enDisplay}</div>` : ''}
+                    </div>
+                </div>
+            `;
         });
 
         card.innerHTML = html;
