@@ -251,7 +251,7 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 @media(max-width:768px){
     :root {
         --verse-text-size: 1.05rem;     /* Synchronized scaling across all cards on mobile */
-        --verse-sanskrit-size: 1.35rem; /* Proportional scale-down for mobile sanskrit */
+        --verse-sanskrit-size: 1.25rem; /* Proportional scale-down for mobile sanskrit */
     }
 
     .lang-switcher { justify-content: center; margin-bottom: 5px; }
