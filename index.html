@@ -81,7 +81,11 @@
         </div>
 
         <div class="controls" id="checkboxControls">
-            <h3 id="readingLayoutHeader">পাঠ বিন্যাস</h3>
+            <div class="view-mode-tabs" id="viewModeTabs">
+                <button type="button" class="view-mode-btn" data-mode="default" onclick="setViewMode('default')">সাধারণ</button>
+                <button type="button" class="view-mode-btn" data-mode="advanced" onclick="setViewMode('advanced')">বিস্তারিত</button>
+                <button type="button" class="view-mode-btn" data-mode="dual" onclick="setViewMode('dual')">দ্বৈত ভাষা</button>
+            </div>
             <div class="checkbox-grid" id="checkboxContainer"></div>
         </div>
 
