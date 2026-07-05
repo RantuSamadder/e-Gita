@@ -117,7 +117,6 @@ function toggleLanguage() {
 
 function applyLanguageUI() {
     const text = UI[currentLang];
-    document.getElementById('loaderText').innerHTML = text.loaderText;
     document.getElementById('heroTitle').innerHTML = text.heroTitle;
     document.getElementById('heroSubtitle').innerHTML = text.heroSubtitle;
     document.getElementById('indexHeader').innerText = text.indexHeader;
