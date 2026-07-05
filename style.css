@@ -90,12 +90,12 @@ body {
 }
 
 /* ==========================================================================
-   2. ADVANCED ELEGANT LOADER (স্থির ছবি এবং টেক্সটের নিচে স্পিনার)
+   2. ADVANCED ELEGANT LOADER (ফুল স্ক্রিন লোগো এবং নিচের ফাঁকা অংশে ডার্ক স্পিনার)
    ========================================================================== */
 #loader {
     position: fixed;
     inset: 0;
-    background: #efe3c2;
+    background: #efe3c2; /* ইমেজ লোড হওয়ার আগ পর্যন্ত ব্যাকগ্রাউন্ড কালার */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,64 +104,85 @@ body {
 }
 
 .loader-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px; /* প্রতিটি উপাদানের মধ্যকার সুন্দর দূরত্ব */
-    text-align: center;
+    justify-content: center;
 }
 
-/* মূল ছবি - এটি সম্পূর্ণ স্থির থাকবে */
-/* মূল ছবি - এটি সম্পূর্ণ স্থির থাকবে এবং চারপাশে বর্ডার থাকবে */
+/* লোগোটি পুরো স্ক্রিন জুড়ে ব্যাকগ্রাউন্ড কভার হিসেবে থাকবে */
 .loader-logo {
-    width: 210px; /* আপনার লোগো অনুযায়ী সাইজ পরিবর্তন করতে পারেন */
-    height: auto;
-    display: block;
-    
-    /* বর্ডার যোগ করার অংশ */
-    border: 3px solid #8a5a2d; /* ৩ পিক্সেল চওড়া ব্রাউন বর্ডার */
-    border-radius: 5%;        /* গোল লোগো হলে বর্ডারটি বৃত্তাকার করার জন্য (যদি লোগো চারকোনা হয় এবং গোল করতে চান) */
-    padding: 1.5px;              /* বর্ডার এবং ছবির মাঝখানে সামান্য ফাঁকা জায়গা রাখার জন্য */
-    background: #fffdf6;       /* বর্ডারের ভেতরের ব্যাকগ্রাউন্ড কালার */
-    
-    /* ছবিটিকে আরও ফুটিয়ে তোলার জন্য হালকা শ্যাডো (ঐচ্ছিক) */
-    box-shadow: 0 4px 15px rgba(138, 90, 45, 0.2); 
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ইমেজটি যেন চ্যাপ্টা না হয়ে সুন্দরভাবে স্ক্রিন কভার করে */
+    z-index: 1;
 }
 
-/* টেক্সট কন্টেইনার */
-.loader-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-/* প্রথম লাইনের বাংলা টেক্সট */
-.loader-text {
-    font-size: 2.4rem;
-    color: #5a3515;
-    letter-spacing: 1px;
-    background: linear-gradient(90deg, #5a3515, #a37244, #5a3515);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textShimmer 3s infinite linear;
-    font-weight: bold;
-}
-
-/* টেক্সটের নিচে থাকা স্পিনার */
+/* স্পিনারটিকে ছবির নিচের দিকের ফাঁকা জায়গায় (নিচ থেকে প্রায় ১৫% উপরে) ডার্ক রঙে পজিশন করা হলো */
 .mandala-spinner { 
-    position: relative; 
-    width: 60px; 
-    height: 60px; 
+    position: absolute; 
+    bottom: 8%; /* লোগোর নিচের ফাঁকা জায়গার সামঞ্জস্যপূর্ণ উচ্চতা */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;  
+    height: 70px; 
     display: flex; 
     justify-content: center; 
     align-items: center;
-    margin-top: 5px;
+    z-index: 2; /* লোগো ইমেজের উপরে দেখানোর জন্য */
 }
 
-.shimmer-core { position: absolute; width: 10px; height: 10px; background: #8a5a2d; border-radius: 50%; box-shadow: 0 0 15px #7a4b1f, 0 0 30px #5a3515; animation: corePulse 2s infinite ease-in-out; }
-.inner-ring { position: absolute; width: 38px; height: 38px; border: 3px dashed #7a4b1f; border-radius: 50%; animation: spinClockwise 4s infinite linear; }
-.outer-ring { position: absolute; width: 60px; height: 60px; border: 2px double transparent; border-top-color: #5a3515; border-bottom-color: #5a3515; border-radius: 50%; animation: spinCounterClockwise 2.5s infinite ease-in-out; }
+/* স্পিনারের ডার্ক কালার কম্বিনেশন */
+.shimmer-core { 
+    position: absolute; 
+    width: 12px; 
+    height: 12px; 
+    background: #2b1401; /* একদম ডার্ক চকলেট/ব্রাউন কোর */
+    border-radius: 50%; 
+    box-shadow: 0 0 10px #422003, 0 0 20px #2b1401; 
+    animation: corePulse 2s infinite ease-in-out; 
+}
+
+.inner-ring { 
+    position: absolute; 
+    width: 44px; 
+    height: 44px; 
+    border: 3.5px dashed #422003; /* ডার্ক ড্যাশড ইনার রিং */
+    border-radius: 50%; 
+    animation: spinClockwise 5s infinite linear; 
+}
+
+.outer-ring { 
+    position: absolute; 
+    width: 70px; 
+    height: 70px; 
+    border: 2.5px double transparent; 
+    border-top-color: #2b1401; /* ডার্ক আউটার রিং */
+    border-bottom-color: #2b1401; 
+    border-radius: 50%; 
+    animation: spinCounterClockwise 2.8s infinite ease-in-out; 
+}
+
+/* অ্যানিমেশন কিফ্রেমসমূহ */
+@keyframes spinClockwise { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
+
+@keyframes spinCounterClockwise { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(-360deg); } 
+}
+
+@keyframes corePulse { 
+    0%, 100% { transform: scale(0.85); opacity: 0.8; } 
+    50% { transform: scale(1.15); opacity: 1; } 
+}
+
+/* টেক্সট শিমার অ্যানিমেশনটি বাদ দেওয়া হয়েছে */
 
 @keyframes spinClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes spinCounterClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
