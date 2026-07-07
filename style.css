@@ -90,7 +90,7 @@ body {
 }
 
 /* ==========================================================================
-   2. ADVANCED ELEGANT LOADER (স্থির ছবি এবং টেক্সটের নিচে স্পিনার)
+   2. ADVANCED ELEGANT LOADER 
    ========================================================================== */
 #loader {
     position: fixed;
@@ -107,35 +107,27 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 25px; /* প্রতিটি উপাদানের মধ্যকার সুন্দর দূরত্ব */
+    gap: 25px; 
     text-align: center;
 }
 
-/* মূল ছবি - এটি সম্পূর্ণ স্থির থাকবে */
-/* মূল ছবি - এটি সম্পূর্ণ স্থির থাকবে এবং চারপাশে বর্ডার থাকবে */
 .loader-logo {
-    width: 210px; /* আপনার লোগো অনুযায়ী সাইজ পরিবর্তন করতে পারেন */
+    width: 210px; 
     height: auto;
     display: block;
-    
-    /* বর্ডার যোগ করার অংশ */
-    border: 3px solid #8a5a2d; /* ৩ পিক্সেল চওড়া ব্রাউন বর্ডার */
-    border-radius: 5%;        /* গোল লোগো হলে বর্ডারটি বৃত্তাকার করার জন্য (যদি লোগো চারকোনা হয় এবং গোল করতে চান) */
-    padding: 1.5px;              /* বর্ডার এবং ছবির মাঝখানে সামান্য ফাঁকা জায়গা রাখার জন্য */
-    background: #fffdf6;       /* বর্ডারের ভেতরের ব্যাকগ্রাউন্ড কালার */
-    
-    /* ছবিটিকে আরও ফুটিয়ে তোলার জন্য হালকা শ্যাডো (ঐচ্ছিক) */
+    border: 3px solid #8a5a2d; 
+    border-radius: 5%;        
+    padding: 1.5px;              
+    background: #fffdf6;       
     box-shadow: 0 4px 15px rgba(138, 90, 45, 0.2); 
 }
 
-/* টেক্সট কন্টেইনার */
 .loader-text-wrapper {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-/* প্রথম লাইনের বাংলা টেক্সট */
 .loader-text {
     font-size: 2.4rem;
     color: #5a3515;
@@ -148,7 +140,6 @@ body {
     font-weight: bold;
 }
 
-/* টেক্সটের নিচে থাকা স্পিনার */
 .mandala-spinner { 
     position: relative; 
     width: 60px; 
@@ -214,7 +205,6 @@ body {
 .lang-col-bn { padding-right: 14px; border-right: 1px solid rgba(80,50,20,0.15); }
 .lang-col-en { padding-left: 14px; }
 
-/* Force Kalpurush for Bengali Column in English Dual-Mode */
 body.lang-en .verse-card.dual-verse-card .lang-col-bn,
 body.lang-en .verse-card.dual-verse-card .lang-col-bn *,
 body.lang-en .verse-card.dual-verse-card .field-title .bn-part,
@@ -246,7 +236,7 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 .field-content { white-space: pre-wrap; font-size: var(--verse-text-size); width: 100%; line-height: 1.8; }
 
 /* ==========================================================================
-   7. TARGETED LANGUAGES & ALIGNMENTS (UNIFIED VISUAL BALANCE)
+   7. TARGETED LANGUAGES & ALIGNMENTS 
    ========================================================================== */
 .sanskrit, [class*="sanskrit"] { font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important; font-size: var(--verse-sanskrit-size) !important; line-height: 2.0 !important; color: #4f2f12 !important; font-weight: bold !important; text-align: center !important; width: 100% !important; display: block !important; }
 .bangla-transliteration, [class*="transliteration"] { text-align: center !important; font-weight: bold !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; width: 100% !important; display: block !important; }
@@ -256,8 +246,6 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 .center-text { text-align: center !important; display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; line-height: 1.8 !important; }
 .word-meanings, [class*="word-meanings"] { text-align: justify !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; display: block !important; width: 100% !important; color: #3d2f1d !important; }
 .word-meanings strong { color: #6d421c; font-weight: 700; }
-
-/* English text size perfectly matches the global custom property scale */
 .english-text { text-align: left !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; }
 
 /* ==========================================================================
@@ -281,12 +269,12 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 .verse-card.special-page .field-content .center-text { text-align: center !important; display: block !important; width: 100% !important; margin: 0 auto !important; }
 
 /* ==========================================================================
-   10. RESPONSIVE DESIGN (MOBILE FONT SIZES FULLY AUTOMATED)
+   10. RESPONSIVE DESIGN
    ========================================================================== */
 @media(max-width:768px){
     :root {
-        --verse-text-size: 1.05rem;     /* Synchronized scaling across all cards on mobile */
-        --verse-sanskrit-size: 1.25rem; /* Proportional scale-down for mobile sanskrit */
+        --verse-text-size: 1.05rem;     
+        --verse-sanskrit-size: 1.25rem; 
     }
 
     .lang-switcher { justify-content: center; margin-bottom: 5px; }
@@ -300,13 +288,11 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
     .view-mode-tabs { gap: 8px; }
     .view-mode-btn { flex: 1 1 auto; padding: 10px 10px; font-size: 0.85rem; }
 
-    /* Force 2-column grid on mobile portrait */
     .checkbox-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 8px;
     }
 
-    /* Side-by-Side Dual Lang row on mobile */
     .dual-lang-row { 
         flex-direction: row !important; 
         gap: 10px; 
@@ -320,18 +306,15 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
     .lang-col-en { 
         padding-left: 10px; 
     }
-    
 }
+
 @media(max-width: 768px) {
-    /* ইংরেজি মোডে হিরো টাইটেল বা প্যারাগ্রাফের সাইজ কমানোর জন্য */
     body.lang-en .hero h1 {
-        font-size: 1.8rem; /* আগের ২.২rem থেকে কমিয়ে ১.৮rem করা হলো */
+        font-size: 1.8rem; 
     }
     body.lang-en .hero p {
-        font-size: 0.9rem; /* সাবটাইটেল বা মহামন্ত্রের সাইজ কমানোর জন্য */
+        font-size: 0.9rem; 
     }
-    
-    /* যদি লেখাগুলো ইনডেক্স বা অধ্যায়ের ভেতরের কোনো টেক্সট হয় */
     body.lang-en .book-title h2, 
     body.lang-en .chapter-header h2 {
         font-size: 1.5rem;
@@ -339,9 +322,8 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 }
 
 /* ==========================================================================
-   11. COMPREHENSIVE BENGALI FONT PROTECTION (CLEANED)
+   11. COMPREHENSIVE BENGALI FONT PROTECTION 
    ========================================================================== */
-/* English mode layout & exact native Bengali classes font lock */
 body.lang-en .lang-switcher,
 body.lang-en .lang-switcher *,
 body.lang-en #langSelect,
@@ -351,4 +333,87 @@ body.lang-en .verse-card .bangla-text,
 body.lang-en .verse-card .bangla-transliteration,
 body.lang-en .verse-card .gitar-gaan-text {
     font-family: 'Kalpurush', Arial, sans-serif !important;
+}
+
+/* ==========================================================================
+   12. PDF PREVIEW & ART CHAPTER STYLING (DESKTOP HEIGHT & MOBILE SIDE FIT)
+   ========================================================================== */
+.verse-card.pdf-card {
+    border-left: 4px solid #8a5a2d !important;
+    padding: 16px !important;
+    background: #fdf6e3;
+}
+
+.pdf-container {
+    width: 100%;
+    /* ডেস্কটপে স্ক্রিনের উচ্চতার সাথে মিলিয়ে প্রিভিউয়ারে ফিট রাখার জন্য ভিউপোর্ট হাইট */
+    height: 80vh; 
+    min-height: 500px;
+    border: 2px solid #8a5a2d;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(138, 90, 45, 0.12);
+    background-color: #fffdf6;
+    position: relative;
+    /* জুম ফিচারে যেন কোনো টাচ ইভেন্ট ব্লক না হয় */
+    touch-action: auto; 
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.pdf-action-wrapper {
+    text-align: center;
+    margin-top: 18px;
+    margin-bottom: 4px;
+}
+
+.pdf-action-btn {
+    display: inline-block;
+    background: #6d421c;
+    color: #fff !important;
+    text-decoration: none;
+    padding: 10px 22px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(109, 66, 28, 0.2);
+    transition: all 0.2s ease;
+}
+
+.pdf-action-btn:hover {
+    background: #4f2f12;
+    transform: translateY(-1px);
+}
+
+/* মোবাইল ভিউ-এর জন্য বিশেষ সাইড-ফিট মিডিয়া কোয়েরি */
+@media(max-width: 768px) {
+    .verse-card.pdf-card {
+        /* মোবাইলে দুই পাশের প্যাডিং ০ করে পিডিএফ-কে স্ক্রিনের একদম শেষ প্রান্ত পর্যন্ত ফিট করা হয়েছে */
+        padding: 6px 0px !important; 
+        border-left: none !important; /* সাইড স্পেস বাঁচাতে বামের মোটা বর্ডারটি বাদ দেওয়া হয়েছে */
+        background: transparent;
+        box-shadow: none;
+    }
+    
+    .pdf-container {
+        width: 100%;
+        height: 72vh;            
+        height: 72dvh;           /* ডাইনামিক মোবাইল ভিউপোর্ট হাইট */
+        min-height: 440px;       
+        border-left: none;       /* ডানে ও বামে বর্ডার তুলে দিয়ে স্ক্রিন টু স্ক্রিন ফিট */
+        border-right: none;
+        border-radius: 0px;      /* নিখুঁত সাইড ফিটিং এর জন্য কোণা সোজা করা হয়েছে */
+        box-shadow: none;
+    }
+    
+    .pdf-action-btn {
+        width: calc(100% - 24px); /* বাটনে সামান্য মার্জিন রাখা হয়েছে দেখতে সুন্দর লাগার জন্য */
+        box-sizing: border-box;
+        padding: 12px 16px;      
+    }
 }
