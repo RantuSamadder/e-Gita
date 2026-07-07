@@ -53,8 +53,8 @@ const UI = {
 
 // Allowed fields for Checkboxes and Rendering per Language
 const LANG_FIELDS = {
-    bn: ['শ্লোক', 'সংষ্কৃতম্', 'উচ্চারণ', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ'],
-    en: ['Verse', 'সংষ্কৃতম্', 'Transliteration', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface']
+    bn: ['শ্লোক', 'সংষ্কৃতম্', 'উচ্চারণ', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'],
+    en: ['Verse', 'সংষ্কৃতম্', 'Transliteration', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface', 'About the Author']
 };
 
 // Fixed fields shown in "সাধারণ / Default View" (no checkboxes)
@@ -64,7 +64,6 @@ const DEFAULT_VIEW_FIELDS = {
 };
 
 // Combined (Bengali + English) field groups for "দ্বৈত ভাষা / Dual language View".
-// 'গীতার গান' is intentionally excluded here, as it has no English counterpart.
 const DUAL_FIELD_GROUPS = [
     { id: 'সংষ্কৃতম্', bnKey: 'সংষ্কৃতম্', enKey: 'সংষ্কৃতম্', shared: true, labelBn: 'সংষ্কৃতম্', labelEn: 'Sanskrit' },
     { id: 'উচ্চারণ', bnKey: 'উচ্চারণ', enKey: 'Transliteration', labelBn: 'উচ্চারণ', labelEn: 'Transliteration' },
@@ -72,6 +71,20 @@ const DUAL_FIELD_GROUPS = [
     { id: 'অনুবাদ', bnKey: 'অনুবাদ', enKey: 'Translation', labelBn: 'অনুবাদ', labelEn: 'Translation' },
     { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য', labelEn: 'Purport' }
 ];
+
+// Helper Function: Checks if the chapter is a special page
+function isSpecialPage(chapterName) {
+    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'].includes(chapterName);
+}
+
+// Helper Function: Returns the proper column key based on the language
+function getSpecialKey(chapterName, lang) {
+    if (lang === 'bn') return chapterName;
+    if (chapterName === 'ভূমিকা') return 'Introduction';
+    if (chapterName === 'মুখবন্ধ') return 'Preface';
+    if (chapterName === 'গ্রন্থকারের পরিচিতি') return 'About the Author'; // Ensure this matches your English column name
+    return chapterName;
+}
 
 async function loadData(){
     try{
@@ -117,6 +130,7 @@ function toggleLanguage() {
 
 function applyLanguageUI() {
     const text = UI[currentLang];
+    document.getElementById('loaderText').innerHTML = text.loaderText;
     document.getElementById('heroTitle').innerHTML = text.heroTitle;
     document.getElementById('heroSubtitle').innerHTML = text.heroSubtitle;
     document.getElementById('indexHeader').innerText = text.indexHeader;
@@ -145,7 +159,7 @@ function initMainJumpFilter() {
     const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
 
     appData.সূচীপত্র.forEach(item => {
-        if (item['Chapter'] !== 'ভূমিকা' && item['Chapter'] !== 'মুখবন্ধ') {
+        if (!isSpecialPage(item['Chapter'])) {
             const option = document.createElement('option');
             option.value = item['Chapter']; // Value always strict to Bengali SheetName
             option.textContent = item[chapKey] || item['Chapter']; // Display text depends on Lang
@@ -300,7 +314,7 @@ function setViewMode(mode){
     if (viewMode === mode) return;
     viewMode = mode;
 
-    if (!currentChapter || currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
+    if (!currentChapter || isSpecialPage(currentChapter)) {
         updateViewModeUI();
         return;
     }
@@ -332,7 +346,7 @@ function renderIndex(){
 
         let titleText = '';
 
-        if (item['Chapter'] === 'ভূমিকা' || item['Chapter'] === 'মুখবন্ধ') {
+        if (isSpecialPage(item['Chapter'])) {
             titleText = displayChap;
         } else if (displayChap && displayName) {
             titleText = `${displayChap} : ${displayName}`;
@@ -361,7 +375,7 @@ function renderChapter(chapterName, isFirstLoad = false){
     const checkboxControls = document.getElementById('checkboxControls');
     const chapterJumpControls = document.getElementById('chapJumpContainer');
 
-    if (chapterName === 'ভূমিকা' || chapterName === 'মুখবন্ধ') {
+    if (isSpecialPage(chapterName)) {
         if (checkboxControls) checkboxControls.style.display = 'none';
         if (chapterJumpControls) chapterJumpControls.style.display = 'none';
     } else {
@@ -369,7 +383,7 @@ function renderChapter(chapterName, isFirstLoad = false){
         if (chapterJumpControls) chapterJumpControls.style.display = 'block';
     }
 
-    if (isFirstLoad && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
+    if (isFirstLoad && !isSpecialPage(chapterName)) {
         buildControlsForChapter(chapter);
         
         const container = document.getElementById('checkboxContainer');
@@ -391,7 +405,7 @@ function renderChapter(chapterName, isFirstLoad = false){
 
     // Populate inner chapter select
     const chapVerseSelect = document.getElementById('chapVerseSelect');
-    if (chapVerseSelect && chapterName !== 'ভূমিকা' && chapterName !== 'মুখবন্ধ') {
+    if (chapVerseSelect && !isSpecialPage(chapterName)) {
         populateVerses('chap');
     }
 
@@ -424,14 +438,14 @@ function renderVerses(chapter){
     container.innerHTML = '';
 
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
-    if (currentChapter !== 'ভূমিকা' && currentChapter !== 'মুখবন্ধ' && viewMode === 'dual') {
+    if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
         renderVersesDual(chapter, container);
         return;
     }
 
     let selectedFields = [];
-    if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
-        const specialKey = currentLang === 'en' ? (currentChapter === 'ভূমিকা' ? 'Introduction' : 'Preface') : (currentChapter === 'ভূমিকা' ? 'ভূমিকা' : 'মুখবন্ধ');
+    if (isSpecialPage(currentChapter)) {
+        const specialKey = getSpecialKey(currentChapter, currentLang);
         selectedFields = [specialKey];
     } else if (viewMode === 'default') {
         selectedFields = currentLang === 'en' ? DEFAULT_VIEW_FIELDS.en : DEFAULT_VIEW_FIELDS.bn;
@@ -442,7 +456,7 @@ function renderVerses(chapter){
     chapter.verses.forEach((verse, index) => {
         const card = document.createElement('div');
         
-        if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') {
+        if (isSpecialPage(currentChapter)) {
             card.className = 'verse-card special-page';
         } else {
             card.className = 'verse-card';
@@ -455,7 +469,7 @@ function renderVerses(chapter){
         card.id = `verse-${fullVerse}`; 
 
         let html = '';
-        if (currentChapter !== 'ভূমিকা' && currentChapter !== 'মুখবন্ধ' && (verse['শ্লোক'] || verse['Verse'])) {
+        if (!isSpecialPage(currentChapter) && (verse['শ্লোক'] || verse['Verse'])) {
             const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
             const formattedVerse = verseOnly.replaceAll('_', ', ');
             html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
@@ -489,7 +503,7 @@ function renderVerses(chapter){
                 else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
                 else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
 
-                if (currentChapter === 'ভূমিকা' || currentChapter === 'মুখবন্ধ') { showTitle = false; }
+                if (isSpecialPage(currentChapter)) { showTitle = false; }
 
                 html += `
                     <div class="field">
