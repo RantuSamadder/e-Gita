@@ -26,7 +26,8 @@ const UI = {
         prevBtnText: "← পূর্ববর্তী",
         nextBtnText: "পরবর্তী",
         alertBoth: "দয়া করে অধ্যায় ও শ্লোক উভয়ই সিলেক্ট করুন।",
-        alertVerse: "দয়া করে শ্লোক সিলেক্ট করুন।"
+        alertVerse: "দয়া করে শ্লোক সিলেক্ট করুন।",
+    
     },
     en: {
         loaderText: "Śrīmad Bhagavad Gītā",
@@ -47,7 +48,7 @@ const UI = {
         prevBtnText: "← Previous",
         nextBtnText: "Next",
         alertBoth: "Please select both chapter and verse.",
-        alertVerse: "Please select a verse."
+        alertVerse: "Please select a verse.",
     }
 };
 
@@ -72,9 +73,9 @@ const DUAL_FIELD_GROUPS = [
     { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য', labelEn: 'Purport' }
 ];
 
-// Helper Function: Checks if the chapter is a special page
+// Helper Function: Checks if the chapter is a special page (Updated to include PDF View)
 function isSpecialPage(chapterName) {
-    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'].includes(chapterName);
+    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি', 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ'].includes(chapterName);
 }
 
 // Helper Function: Returns the proper column key based on the language
@@ -82,7 +83,8 @@ function getSpecialKey(chapterName, lang) {
     if (lang === 'bn') return chapterName;
     if (chapterName === 'ভূমিকা') return 'Introduction';
     if (chapterName === 'মুখবন্ধ') return 'Preface';
-    if (chapterName === 'গ্রন্থকারের পরিচিতি') return 'About the Author'; // Ensure this matches your English column name
+    if (chapterName === 'গ্রন্থকারের পরিচিতি') return 'About the Author'; 
+    if (chapterName === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') return 'Original Arts';
     return chapterName;
 }
 
@@ -92,6 +94,26 @@ async function loadData(){
         const data = await response.json();
         appData = data;
         
+        // ডাইনামিকভাবে সূচীপত্রের শেষে নতুন PDF পেইজের ডাটা অবজেক্ট পুশ করা হচ্ছে
+        if (appData && appData.সূচীপত্র) {
+            appData.সূচীপত্র.push({
+                'Chapter': 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ',
+                'Chapter(En)': 'Bhagavad-gītā As It Is - Original Arts',
+                'Name': '',
+                'Name(En)': '',
+                'Details': 'মূল সংস্করণের রঙিন চিত্রসমূহ',
+                'Details(En)': 'Color illustrations from the original edition'
+            });
+        }
+        
+        // ডাইনামিকভাবে চ্যাপ্টার লিস্টের ভেতরে নতুন চ্যাপ্টার রেফারেন্স অবজেক্ট পুশ করা হচ্ছে
+        if (appData && appData.chapters) {
+            appData.chapters.push({
+                sheetName: 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ',
+                verses: [] 
+            });
+        }
+
         applyLanguageUI();
         renderIndex();
         initMainJumpFilter(); 
@@ -183,7 +205,6 @@ function populateVerses(type) {
     
     if (chapter && chapter.verses) {
         chapter.verses.forEach(v => {
-            // পরিবর্তন: ভাষা অনুযায়ী সঠিক কলাম (Key) নির্বাচন
             const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
             const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
             const fullVerse = v[verseKey] || v[fallbackKey] || '';
@@ -226,7 +247,7 @@ function jumpToVerse(type) {
     }, 500);
 }
 
-// চেকবক্স জেনারেট (ভাষা অনুযায়ী ফিল্টার করা)
+// চেকবক্স জেনারেট (ভাষা অনুযায়ী ফিল্টার করা)
 function createCheckboxesForChapter(chapter){
     const container = document.getElementById('checkboxContainer');
     container.innerHTML = '';
@@ -236,15 +257,12 @@ function createCheckboxesForChapter(chapter){
     const firstVerse = chapter.verses[0];
     const allowedKeys = LANG_FIELDS[currentLang];
     
-    // Find keys that exist in sheet AND match our current language allowed fields (exclude verse IDs)
     const fields = Object.keys(firstVerse).filter(key => 
         key !== 'শ্লোক' && key !== 'Verse' && allowedKeys.includes(key)
     );
 
     fields.forEach(field => {
         const label = document.createElement('label');
-        
-        // পরিবর্তন: পাঠ বিন্যাসের চেকবক্স লেবেলে ইংরেজি মোডে 'সংষ্কৃতম্' এর বদলে 'Sanskrit' দেখানোর জন্য
         const displayCheckboxLabel = (currentLang === 'en' && field === 'সংষ্কৃতম্') ? 'Sanskrit' : field;
         
         label.innerHTML = `
@@ -329,7 +347,7 @@ function setViewMode(mode){
     window.scrollTo(0, scrollY);
 }
 
-// সূচীপত্র রেন্ডারিং (আপডেট করা হয়েছে)
+// সূচীপত্র রেন্ডারিং 
 function renderIndex(){
     const container = document.getElementById('indexContainer');
     container.innerHTML = '';
@@ -437,6 +455,20 @@ function renderVerses(chapter){
     const container = document.getElementById('versesContainer');
     container.innerHTML = '';
 
+    // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
+    // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
+    if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
+        const card = document.createElement('div');
+        card.className = 'verse-card special-page pdf-card';
+        card.innerHTML = `
+            <div class="pdf-container">
+                <iframe src="assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
+            </div>
+        `;
+        container.appendChild(card);
+        return;
+    }
+
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
     if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
         renderVersesDual(chapter, container);
@@ -462,7 +494,6 @@ function renderVerses(chapter){
             card.className = 'verse-card';
         }
         
-        // পরিবর্তন: ভাষা অনুযায়ী কার্ড আইডি এবং শ্লোক নম্বর নির্ধারণ যেন ইংরেজিতে ইংরেজি সংখ্যা (01) আসে
         const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
         const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
         const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
@@ -481,14 +512,11 @@ function renderVerses(chapter){
                 let showTitle = true; 
                 let content = verse[field];
 
-                // পরিবর্তন: শ্লোক কার্ডের ভেতরে কোনো মোডেই (বাংলা/ইংরেজি) 'সংষ্কৃতম্' এর জন্য হেডিং টাইটেল দেখাবে না
                 if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
                 else if(field === 'Transliteration' || field === 'উচ্চারণ'){ extraClass = 'bangla-transliteration'; showTitle = false; }
                 else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
                 else if(field === 'শব্দার্থ' || field === 'Synonyms'){ 
                     extraClass = 'word-meanings'; 
-                    
-                    // ফিল্ড অনুযায়ী বিভাজক (Separator) নির্ধারণ
                     const separator = field === 'শব্দার্থ' ? '-' : '—';
                     
                     content = content.split(';').map(part => {
@@ -499,7 +527,7 @@ function renderVerses(chapter){
                         return part;
                     }).join(';');
                 }
-                else if(field.includes('গীতার') && field.includes('গান')){ extraClass = 'gitar-gaan-text'; }
+                else if(field.includes('गीतार') && field.includes('গান')){ extraClass = 'gitar-gaan-text'; }
                 else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
                 else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
 
@@ -536,7 +564,6 @@ function renderVersesDual(chapter, container){
         const card = document.createElement('div');
         card.className = 'verse-card dual-verse-card';
 
-        // পরিবর্তন: ভাষা অনুযায়ী সঠিক কলাম থেকে শ্লোক নম্বর নেওয়া হচ্ছে, যেন ইংরেজি মোডে ইংরেজি সংখ্যা (01) দেখায়
         const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
         const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
         const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
@@ -555,7 +582,7 @@ function renderVersesDual(chapter, container){
                 if (!content) return;
                 html += `
                     <div class="field">
-                        <div class="field-content sanskrit">${content}</div>
+                        <div class="field-content sanssans-crit">${content}</div>
                     </div>
                 `;
                 return;
@@ -566,7 +593,6 @@ function renderVersesDual(chapter, container){
             if (!bnContent && !enContent) return;
 
             let extraClass = '';
-            // পরিবর্তন: 'উচ্চারণ / Transliteration' এর জন্য কোনো টাইটেল দেখাবে না (একক ভাষার ভিউয়ের মতোই)
             const showTitle = group.id !== 'উচ্চারণ';
             if (group.id === 'উচ্চারণ') extraClass = 'bangla-transliteration';
             else if (group.id === 'অনুবাদ') extraClass = 'bangla-text';
@@ -630,7 +656,6 @@ function backToIndex(){
     document.getElementById('chapterView').style.display = 'none';
     document.getElementById('bookView').style.display = 'block';
     
-    // সমাধান: ইন্ডেক্স পেজে ফেরার সময় বর্তমান ভাষা অনুযায়ী রি-রেন্ডার করা
     renderIndex();
     initMainJumpFilter();
     
