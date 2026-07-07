@@ -455,19 +455,26 @@ function renderVerses(chapter){
     const container = document.getElementById('versesContainer');
     container.innerHTML = '';
 
-    // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
-    // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
-    if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
-        const card = document.createElement('div');
-        card.className = 'verse-card special-page pdf-card';
-        card.innerHTML = `
-            <div class="pdf-container">
-                <iframe src="./assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
-            </div>
-        `;
-        container.appendChild(card);
-        return;
-    }
+   // পরিবর্তন করার পরের কোড (যা মোবাইল ও ডেস্কটপ দুটিতেই সরাসরি প্রিভিউ দেখাবে):
+if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
+    const card = document.createElement('div');
+    card.className = 'verse-card special-page pdf-card';
+    
+    // গিটহাব পেজেস-এর লাইভ লিংক তৈরি করা হচ্ছে (e-Gita রিপোজিটরির জন্য)
+    // 'YOUR_GITHUB_USERNAME' এর জায়গায় আপনার আসল গিটহাব ইউজারনেম বসিয়ে দেবেন
+    const rawPdfUrl = window.location.origin + window.location.pathname + 'assets/arts.pdf';
+    
+    // গুগল ডকস ভিউয়ার এমবেড লিংক
+    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
+
+    card.innerHTML = `
+        <div class="pdf-container">
+            <iframe src="${googleViewerUrl}" class="pdf-viewer" allow="autoplay"></iframe>
+        </div>
+    `;
+    container.appendChild(card);
+    return;
+}
 
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
     if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
