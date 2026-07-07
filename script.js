@@ -462,7 +462,7 @@ function renderVerses(chapter){
         card.className = 'verse-card special-page pdf-card';
         card.innerHTML = `
             <div class="pdf-container">
-                <iframe src="assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
+                <iframe src="./assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
             </div>
         `;
         container.appendChild(card);
