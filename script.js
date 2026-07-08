@@ -54,20 +54,20 @@ const UI = {
 
 // Allowed fields for Checkboxes and Rendering per Language
 const LANG_FIELDS = {
-    bn: ['শ্লোক', 'সংষ্কৃতম্', 'উচ্চারণ', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'],
-    en: ['Verse', 'সংষ্কৃতম্', 'Transliteration', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface', 'About the Author']
+    bn: ['শ্লোক', 'সংষ্কৃতম্', 'বাংলা বর্ণান্তর', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'],
+    en: ['Verse', 'সংষ্কৃতম্', 'IAST', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface', 'About the Author']
 };
 
 // Fixed fields shown in "সাধারণ / Default View" (no checkboxes)
 const DEFAULT_VIEW_FIELDS = {
-    bn: ['উচ্চারণ', 'অনুবাদ'],
-    en: ['Transliteration', 'Translation']
+    bn: ['বাংলা বর্ণান্তর', 'অনুবাদ'],
+    en: ['IAST', 'Translation']
 };
 
 // Combined (Bengali + English) field groups for "দ্বৈত ভাষা / Dual language View".
 const DUAL_FIELD_GROUPS = [
     { id: 'সংষ্কৃতম্', bnKey: 'সংষ্কৃতম্', enKey: 'সংষ্কৃতম্', shared: true, labelBn: 'সংষ্কৃতম্', labelEn: 'Sanskrit' },
-    { id: 'উচ্চারণ', bnKey: 'উচ্চারণ', enKey: 'Transliteration', labelBn: 'উচ্চারণ', labelEn: 'Transliteration' },
+    { id: 'বাংলা বর্ণান্তর', bnKey: 'বাংলা বর্ণান্তর', enKey: 'IAST', labelBn: 'বাংলা বর্ণান্তর', labelEn: 'IAST' },
     { id: 'শব্দার্থ', bnKey: 'শব্দার্থ', enKey: 'Synonyms', labelBn: 'শব্দার্থ', labelEn: 'Synonyms' },
     { id: 'অনুবাদ', bnKey: 'অনুবাদ', enKey: 'Translation', labelBn: 'অনুবাদ', labelEn: 'Translation' },
     { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য', labelEn: 'Purport' }
@@ -455,26 +455,19 @@ function renderVerses(chapter){
     const container = document.getElementById('versesContainer');
     container.innerHTML = '';
 
-   // পরিবর্তন করার পরের কোড (যা মোবাইল ও ডেস্কটপ দুটিতেই সরাসরি প্রিভিউ দেখাবে):
-if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
-    const card = document.createElement('div');
-    card.className = 'verse-card special-page pdf-card';
-    
-    // গিটহাব পেজেস-এর লাইভ লিংক তৈরি করা হচ্ছে (e-Gita রিপোজিটরির জন্য)
-    // 'YOUR_GITHUB_USERNAME' এর জায়গায় আপনার আসল গিটহাব ইউজারনেম বসিয়ে দেবেন
-    const rawPdfUrl = window.location.origin + window.location.pathname + 'assets/arts.pdf';
-    
-    // গুগল ডকস ভিউয়ার এমবেড লিংক
-    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
-
-    card.innerHTML = `
-        <div class="pdf-container">
-            <iframe src="${googleViewerUrl}" class="pdf-viewer" allow="autoplay"></iframe>
-        </div>
-    `;
-    container.appendChild(card);
-    return;
-}
+    // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
+    // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
+    if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
+        const card = document.createElement('div');
+        card.className = 'verse-card special-page pdf-card';
+        card.innerHTML = `
+            <div class="pdf-container">
+                <iframe src="./assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
+            </div>
+        `;
+        container.appendChild(card);
+        return;
+    }
 
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
     if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
@@ -520,7 +513,7 @@ if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল 
                 let content = verse[field];
 
                 if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
-                else if(field === 'Transliteration' || field === 'উচ্চারণ'){ extraClass = 'bangla-transliteration'; showTitle = false; }
+                else if(field === 'IAST' || field === 'বাংলা বর্ণান্তর'){ extraClass = 'bangla-IAST'; showTitle = false; }
                 else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
                 else if(field === 'শব্দার্থ' || field === 'Synonyms'){ 
                     extraClass = 'word-meanings'; 
@@ -589,7 +582,7 @@ function renderVersesDual(chapter, container){
                 if (!content) return;
                 html += `
                     <div class="field">
-                        <div class="field-content sanssans-crit">${content}</div>
+                        <div class="field-content sanskrit">${content}</div>
                     </div>
                 `;
                 return;
@@ -600,8 +593,8 @@ function renderVersesDual(chapter, container){
             if (!bnContent && !enContent) return;
 
             let extraClass = '';
-            const showTitle = group.id !== 'উচ্চারণ';
-            if (group.id === 'উচ্চারণ') extraClass = 'bangla-transliteration';
+            const showTitle = group.id !== 'বাংলা বর্ণান্তর';
+            if (group.id === 'বাংলা বর্ণান্তর') extraClass = 'bangla-IAST';
             else if (group.id === 'অনুবাদ') extraClass = 'bangla-text';
             else if (group.id === 'তাৎপর্য') extraClass = 'purport-text';
             else if (group.id === 'শব্দার্থ') extraClass = 'word-meanings';
