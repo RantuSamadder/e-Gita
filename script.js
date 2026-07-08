@@ -1,5 +1,4 @@
-const API_URL =
-    'https://script.google.com/macros/s/AKfycbzCWcQgCbcKQMlMBC85nLYBN7Vskwsd0CeAd5H1jqvXBmGzPOKMdgebf_AlYwiz56hK/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzCWcQgCbcKQMlMBC85nLYBN7Vskwsd0CeAd5H1jqvXBmGzPOKMdgebf_AlYwiz56hK/exec';
 
 let appData = null;
 let currentChapter = null; // Internal Bengali sheet name indicator
@@ -55,10 +54,8 @@ const UI = {
 
 // Allowed fields for Checkboxes and Rendering per Language
 const LANG_FIELDS = {
-    bn: ['শ্লোক', 'সংষ্কৃতম্', 'বাংলা বর্ণান্তর', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য',
-        'ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'],
-    en: ['Verse', 'সংষ্কৃতম্', 'IAST', 'Synonyms', 'Translation', 'Purport', 'Introduction',
-        'Preface', 'About the Author']
+    bn: ['শ্লোক', 'সংষ্কৃতম্', 'বাংলা বর্ণান্তর', 'শব্দার্থ', 'গীতার গান', 'অনুবাদ', 'তাৎপর্য', 'ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'],
+    en: ['Verse', 'সংষ্কৃতম্', 'IAST', 'Synonyms', 'Translation', 'Purport', 'Introduction', 'Preface', 'About the Author']
 };
 
 // Fixed fields shown in "সাধারণ / Default View" (no checkboxes)
@@ -69,22 +66,16 @@ const DEFAULT_VIEW_FIELDS = {
 
 // Combined (Bengali + English) field groups for "দ্বৈত ভাষা / Dual language View".
 const DUAL_FIELD_GROUPS = [
-    { id: 'সংষ্কৃতম্', bnKey: 'সংষ্কৃতম্', enKey: 'সংষ্কৃতম্', shared: true,
-        labelBn: 'সংষ্কৃতম্', labelEn: 'Sanskrit' },
-    { id: 'বাংলা বর্ণান্তর', bnKey: 'বাংলা বর্ণান্তর', enKey: 'IAST',
-        labelBn: 'বাংলা বর্ণান্তর', labelEn: 'IAST' },
-    { id: 'শব্দার্থ', bnKey: 'শব্দার্থ', enKey: 'Synonyms', labelBn: 'শব্দার্থ',
-        labelEn: 'Synonyms' },
-    { id: 'অনুবাদ', bnKey: 'অনুবাদ', enKey: 'Translation', labelBn: 'অনুবাদ',
-        labelEn: 'Translation' },
-    { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য',
-    labelEn: 'Purport' }
+    { id: 'সংষ্কৃতম্', bnKey: 'সংষ্কৃতম্', enKey: 'সংষ্কৃতম্', shared: true, labelBn: 'সংষ্কৃতম্', labelEn: 'Sanskrit' },
+    { id: 'বাংলা বর্ণান্তর', bnKey: 'বাংলা বর্ণান্তর', enKey: 'IAST', labelBn: 'বাংলা বর্ণান্তর', labelEn: 'IAST' },
+    { id: 'শব্দার্থ', bnKey: 'শব্দার্থ', enKey: 'Synonyms', labelBn: 'শব্দার্থ', labelEn: 'Synonyms' },
+    { id: 'অনুবাদ', bnKey: 'অনুবাদ', enKey: 'Translation', labelBn: 'অনুবাদ', labelEn: 'Translation' },
+    { id: 'তাৎপর্য', bnKey: 'তাৎপর্য', enKey: 'Purport', labelBn: 'তাৎপর্য', labelEn: 'Purport' }
 ];
 
 // Helper Function: Checks if the chapter is a special page (Updated to include PDF View)
 function isSpecialPage(chapterName) {
-    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি', 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ'].includes(
-        chapterName);
+    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি', 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ'].includes(chapterName);
 }
 
 // Helper Function: Returns the proper column key based on the language
@@ -97,15 +88,15 @@ function getSpecialKey(chapterName, lang) {
     return chapterName;
 }
 
-async function loadData() {
-    try {
+async function loadData(){
+    try{
         const response = await fetch(API_URL);
         const data = await response.json();
         appData = data;
 
         // ডাইনামিকভাবে সূচীপত্রের শেষে নতুন PDF পেইজের ডাটা অবজেক্ট পুশ করা হচ্ছে
-        if (appData && appData.সূচীপত্ র) {
-            appData.সূচীপত্ র.push({
+        if (appData && appData.সূচীপত্র) {
+            appData.সূচীপত্র.push({
                 'Chapter': 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ',
                 'Chapter(En)': 'Bhagavad-gītā As It Is - Original Arts',
                 'Name': '',
@@ -126,10 +117,12 @@ async function loadData() {
         applyLanguageUI();
         renderIndex();
         initMainJumpFilter();
-    } catch (error) {
+    }
+    catch(error){
         console.error(error);
         alert('Failed to load Google Sheet data');
-    } finally {
+    }
+    finally{
         document.getElementById('loader').style.display = 'none';
     }
 }
@@ -140,7 +133,7 @@ function toggleLanguage() {
     currentLang = selector.value;
 
     // Toggle CSS Body Class for Fonts
-    if (currentLang === 'en') {
+    if(currentLang === 'en') {
         document.body.classList.add('lang-en');
     } else {
         document.body.classList.remove('lang-en');
@@ -187,26 +180,23 @@ function initMainJumpFilter() {
 
     const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
 
-    appData.সূচীপত্ র.forEach(item => {
+    appData.সূচীপত্র.forEach(item => {
         if (!isSpecialPage(item['Chapter'])) {
             const option = document.createElement('option');
             option.value = item['Chapter']; // Value always strict to Bengali SheetName
-            option.textContent = item[chapKey] || item[
-            'Chapter']; // Display text depends on Lang
+            option.textContent = item[chapKey] || item['Chapter']; // Display text depends on Lang
             mainChapSelect.appendChild(option);
         }
     });
 }
 
 function populateVerses(type) {
-    const chapName = type === 'main' ? document.getElementById('mainChapterSelect').value :
-        currentChapter;
-    const verseSelect = document.getElementById(type === 'main' ? 'mainVerseSelect' :
-        'chapVerseSelect');
+    const chapName = type === 'main' ? document.getElementById('mainChapterSelect').value : currentChapter;
+    const verseSelect = document.getElementById(type === 'main' ? 'mainVerseSelect' : 'chapVerseSelect');
 
     if (!chapName) {
         verseSelect.innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
-        if (type === 'main') verseSelect.disabled = true;
+        if(type === 'main') verseSelect.disabled = true;
         return;
     }
 
@@ -218,7 +208,7 @@ function populateVerses(type) {
             const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
             const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
             const fullVerse = v[verseKey] || v[fallbackKey] || '';
-            if (!fullVerse) return;
+            if(!fullVerse) return;
 
             const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
             const formattedVerse = verseOnly.replaceAll('_', ', ');
@@ -228,7 +218,7 @@ function populateVerses(type) {
             option.textContent = `${UI[currentLang].versePrefix} ${formattedVerse}`;
             verseSelect.appendChild(option);
         });
-        if (type === 'main') verseSelect.disabled = false;
+        if(type === 'main') verseSelect.disabled = false;
     }
 }
 
@@ -258,7 +248,7 @@ function jumpToVerse(type) {
 }
 
 // চেকবক্স জেনারেট (ভাষা অনুযায়ী ফিল্টার করা)
-function createCheckboxesForChapter(chapter) {
+function createCheckboxesForChapter(chapter){
     const container = document.getElementById('checkboxContainer');
     container.innerHTML = '';
 
@@ -273,8 +263,7 @@ function createCheckboxesForChapter(chapter) {
 
     fields.forEach(field => {
         const label = document.createElement('label');
-        const displayCheckboxLabel = (currentLang === 'en' && field === 'সংষ্কৃতম্') ?
-            'Sanskrit' : field;
+        const displayCheckboxLabel = (currentLang === 'en' && field === 'সংষ্কৃতম্') ? 'Sanskrit' : field;
 
         label.innerHTML = `
             <input type="checkbox" value="${field}" checked>
@@ -284,12 +273,12 @@ function createCheckboxesForChapter(chapter) {
     });
 }
 
-function getSelectedFields() {
+function getSelectedFields(){
     return [...document.querySelectorAll('#checkboxContainer input:checked')].map(el => el.value);
 }
 
 // চেকবক্স জেনারেট - দ্বৈত ভাষা (Dual language) মোডের জন্য কম্বাইন করা অপশন
-function createDualCheckboxesForChapter(chapter) {
+function createDualCheckboxesForChapter(chapter){
     const container = document.getElementById('checkboxContainer');
     container.innerHTML = '';
 
@@ -315,7 +304,7 @@ function createDualCheckboxesForChapter(chapter) {
 }
 
 // বর্তমান ভিউ মোড (সাধারণ/বিস্তারিত/দ্বৈত ভাষা) অনুযায়ী নিয়ন্ত্রণ (checkbox) অংশ তৈরি
-function buildControlsForChapter(chapter) {
+function buildControlsForChapter(chapter){
     if (viewMode === 'advanced') {
         createCheckboxesForChapter(chapter);
     } else if (viewMode === 'dual') {
@@ -327,7 +316,7 @@ function buildControlsForChapter(chapter) {
 }
 
 // ভিউ মোড ট্যাব বাটনের সক্রিয় অবস্থা এবং চেকবক্স গ্রিডের দৃশ্যমানতা আপডেট
-function updateViewModeUI() {
+function updateViewModeUI(){
     document.querySelectorAll('.view-mode-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === viewMode);
     });
@@ -339,7 +328,7 @@ function updateViewModeUI() {
 }
 
 // ভিউ মোড পরিবর্তন হ্যান্ডলার (সাধারণ / বিস্তারিত / দ্বৈত ভাষা)
-function setViewMode(mode) {
+function setViewMode(mode){
     if (viewMode === mode) return;
     viewMode = mode;
 
@@ -359,14 +348,14 @@ function setViewMode(mode) {
 }
 
 // সূচীপত্র রেন্ডারিং
-function renderIndex() {
+function renderIndex(){
     const container = document.getElementById('indexContainer');
     container.innerHTML = '';
 
     const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
     const nameKey = currentLang === 'en' ? 'Name(En)' : 'Name';
 
-    appData.সূচীপত্ র.forEach(item => {
+    appData.সূচীপত্র.forEach(item => {
         const card = document.createElement('div');
         card.className = 'index-item';
 
@@ -386,18 +375,17 @@ function renderIndex() {
         card.innerHTML = `<h3>${titleText}</h3>`;
 
         card.addEventListener('click', () => {
-            renderChapter(item['Chapter'],
-            true); // Always pass the internal base Chapter name
+            renderChapter(item['Chapter'], true); // Always pass the internal base Chapter name
         });
 
         container.appendChild(card);
     });
 }
 
-function renderChapter(chapterName, isFirstLoad = false) {
+function renderChapter(chapterName, isFirstLoad = false){
     currentChapter = chapterName;
     const chapter = appData.chapters.find(item => item.sheetName === chapterName);
-    if (!chapter) return;
+    if(!chapter) return;
 
     document.getElementById('bookView').style.display = 'none';
     document.getElementById('chapterView').style.display = 'block';
@@ -420,7 +408,7 @@ function renderChapter(chapterName, isFirstLoad = false) {
         container.onchange = (e) => {
             e.stopPropagation();
             const scrollY = window.scrollY;
-            if (currentChapter) {
+            if(currentChapter){
                 requestAnimationFrame(() => {
                     renderVerses(chapter);
                     window.scrollTo(0, scrollY);
@@ -440,19 +428,18 @@ function renderChapter(chapterName, isFirstLoad = false) {
     }
 
     if (document.activeElement.tagName !== 'BUTTON') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top:0, behavior:'smooth' });
     }
 }
 
-function renderChapterHeader(chapterName) {
+function renderChapterHeader(chapterName){
     const header = document.getElementById('chapterHeader');
-    const chapterIndexData = appData.সূচীপত্ র.find(item => item['Chapter'] === chapterName);
+    const chapterIndexData = appData.সূচীপত্র.find(item => item['Chapter'] === chapterName);
 
     const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
     const descKey = currentLang === 'en' ? 'Details(En)' : 'Details';
 
-    const displayTitle = chapterIndexData ? (chapterIndexData[chapKey] || chapterName) :
-    chapterName;
+    const displayTitle = chapterIndexData ? (chapterIndexData[chapKey] || chapterName) : chapterName;
     const displayDesc = chapterIndexData ? (chapterIndexData[descKey] || '') : '';
 
     header.innerHTML = `
@@ -464,7 +451,7 @@ function renderChapterHeader(chapterName) {
     `;
 }
 
-function renderVerses(chapter) {
+function renderVerses(chapter){
     const container = document.getElementById('versesContainer');
     container.innerHTML = '';
 
@@ -516,22 +503,19 @@ function renderVerses(chapter) {
         if (!isSpecialPage(currentChapter) && (verse['শ্লোক'] || verse['Verse'])) {
             const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
             const formattedVerse = verseOnly.replaceAll('_', ', ');
-            html =
-                `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
+            html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
         }
 
         selectedFields.forEach(field => {
-            if (verse[field]) {
+            if(verse[field]){
                 let extraClass = '';
                 let showTitle = true;
                 let content = verse[field];
 
-                if (field === 'সংষ্কৃতম্') { extraClass = 'sanskrit';
-                    showTitle = false; } else if (field === 'IAST' || field ===
-                    'বাংলা বর্ণান্তর') { extraClass = 'bangla-IAST';
-                    showTitle = false; } else if (field === 'Translation' || field
-                    === 'অনুবাদ') { extraClass = 'bangla-text'; } else if (field ===
-                    'শব্দার্থ' || field === 'Synonyms') {
+                if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
+                else if(field === 'IAST' || field === 'বাংলা বর্ণান্তর'){ extraClass = 'bangla-IAST'; showTitle = false; }
+                else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
+                else if(field === 'শব্দার্থ' || field === 'Synonyms'){
                     extraClass = 'word-meanings';
                     const separator = field === 'শব্দার্থ' ? '-' : '—';
 
@@ -542,11 +526,10 @@ function renderVerses(chapter) {
                         }
                         return part;
                     }).join(';');
-                } else if (field === 'গীতার গান') { extraClass =
-                    'gitar-gaan-text'; } else if (field === 'তাৎপর্য' || field ===
-                    'Purport') { extraClass = 'purport-text'; } else { extraClass =
-                        'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g,
-                        '-'); }
+                }
+                else if(field === 'গীতার গান'){ extraClass = 'gitar-gaan-text'; }
+                else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
+                else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
 
                 if (isSpecialPage(currentChapter)) { showTitle = false; }
 
@@ -565,7 +548,7 @@ function renderVerses(chapter) {
 }
 
 // দ্বৈত ভাষা (Dual language) মোডের রেন্ডারিং: বাংলা ও ইংরেজি পাশাপাশি
-function renderVersesDual(chapter, container) {
+function renderVersesDual(chapter, container){
     const selectedGroupIds = getSelectedFields();
     const selectedGroups = DUAL_FIELD_GROUPS.filter(g => selectedGroupIds.includes(g.id));
 
@@ -590,8 +573,7 @@ function renderVersesDual(chapter, container) {
         if (verse['শ্লোক'] || verse['Verse']) {
             const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
             const formattedVerse = verseOnly.replaceAll('_', ', ');
-            html =
-                `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
+            html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
         }
 
         selectedGroups.forEach(group => {
@@ -617,10 +599,8 @@ function renderVersesDual(chapter, container) {
             else if (group.id === 'তাৎপর্য') extraClass = 'purport-text';
             else if (group.id === 'শব্দার্থ') extraClass = 'word-meanings';
 
-            const bnDisplay = (group.id === 'শব্দার্থ' && bnContent) ?
-                formatSynonyms(bnContent, '-') : bnContent;
-            const enDisplay = (group.id === 'শব্দার্থ' && enContent) ?
-                formatSynonyms(enContent, '—') : enContent;
+            const bnDisplay = (group.id === 'শব্দার্থ' && bnContent) ? formatSynonyms(bnContent, '-') : bnContent;
+            const enDisplay = (group.id === 'শব্দার্থ' && enContent) ? formatSynonyms(enContent, '—') : enContent;
 
             html += `
                 <div class="field dual-field">
@@ -642,9 +622,9 @@ function renderChapterNavigation(chapterName) {
     const navContainer = document.getElementById('chapterNavigation');
     if (!navContainer) return;
 
-    const currentIndex = appData.সূচীপত্ র.findIndex(item => item['Chapter'] === chapterName);
-    const prevChapterItem = appData.সূচীপত্ র[currentIndex - 1];
-    const nextChapterItem = appData.সূচীপত্ র[currentIndex + 1];
+    const currentIndex = appData.সূচীপত্র.findIndex(item => item['Chapter'] === chapterName);
+    const prevChapterItem = appData.সূচীপত্র[currentIndex - 1];
+    const nextChapterItem = appData.সূচীপত্র[currentIndex + 1];
 
     let html = '';
     const chapKey = currentLang === 'en' ? 'Chapter(En)' : 'Chapter';
@@ -672,7 +652,7 @@ function renderChapterNavigation(chapterName) {
     navContainer.innerHTML = html;
 }
 
-function backToIndex() {
+function backToIndex(){
     document.getElementById('chapterView').style.display = 'none';
     document.getElementById('bookView').style.display = 'block';
 
@@ -680,11 +660,10 @@ function backToIndex() {
     initMainJumpFilter();
 
     document.getElementById('mainChapterSelect').value = "";
-    document.getElementById('mainVerseSelect').innerHTML =
-        `<option value="">${UI[currentLang].optVerse}</option>`;
+    document.getElementById('mainVerseSelect').innerHTML = `<option value="">${UI[currentLang].optVerse}</option>`;
     document.getElementById('mainVerseSelect').disabled = true;
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top:0, behavior:'smooth' });
 }
 
 loadData();
