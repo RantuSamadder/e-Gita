@@ -457,17 +457,22 @@ function renderVerses(chapter){
 
     // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
     // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
-    if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
-        const card = document.createElement('div');
-        card.className = 'verse-card special-page pdf-card';
-        card.innerHTML = `
-            <div class="pdf-container">
-                <iframe src="./assets/arts.pdf#view=FitH" class="pdf-viewer" allow="autoplay"></iframe>
-            </div>
-        `;
-        container.appendChild(card);
-        return;
-    }
+    // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
+if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
+    const card = document.createElement('div');
+    card.className = 'verse-card special-page pdf-card';
+    
+    // আপনার অনলাইন PDF-এর সম্পূর্ণ URL এখানে দিন (যেমন: https://yourdomain.com/assets/arts.pdf)
+    const pdfUrl = window.location.origin + './assets/arts.pdf'; 
+    
+    card.innerHTML = `
+        <div class="pdf-container">
+            <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true" class="pdf-viewer" allow="autoplay"></iframe>
+        </div>
+    `;
+    container.appendChild(card);
+    return;
+}
 
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
     if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
