@@ -248,6 +248,23 @@ body.lang-en .verse-card.dual-verse-card .field-title .bn-part * {
 .word-meanings strong { color: #6d421c; font-weight: 700; }
 .english-text { text-align: left !important; font-size: var(--verse-text-size) !important; line-height: 1.8 !important; }
 
+.sanskrit, [class*="sanskrit"] { font-family: 'Tiro Devanagari Sanskrit', 'Noto Serif Devanagari', serif !important; font-size: var(--verse-sanskrit-size) !important; line-height: 2.0 !important; color: #4f2f12 !important; font-weight: bold !important; text-align: center !important; width: 100% !important; display: block !important; }
+
+/* বাংলা বর্ণান্তর ও IAST এর জন্য নতুন ফিক্সড ক্লাস */
+.bangla-IAST, .bangla-transliteration, [class*="transliteration"] { 
+    text-align: center !important; 
+    font-weight: bold !important; 
+    font-size: var(--verse-text-size) !important; 
+    line-height: 1.8 !important; 
+    width: 100% !important; 
+    display: block !important; 
+}
+
+/* দ্বৈত ভাষা (Dual mode) এর ভেতরেও যেন সেন্টার অ্যালাইনড থাকে তার জন্য */
+.dual-lang-row .bangla-IAST {
+    text-align: center !important;
+}
+
 /* ==========================================================================
    8. FOOTER & NAVIGATION BOTTOM LAYOUT
    ========================================================================== */
