@@ -457,17 +457,21 @@ function renderVerses(chapter){
 
     // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
     // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
-    // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
+    // পরিবর্তন করার পরের কোড (যা মোবাইল ও ডেস্কটপ দুটিতেই সরাসরি প্রিভিউ দেখাবে):
 if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
     const card = document.createElement('div');
     card.className = 'verse-card special-page pdf-card';
     
-    // আপনার অনলাইন PDF-এর সম্পূর্ণ URL এখানে দিন (যেমন: https://yourdomain.com/assets/arts.pdf)
-    const pdfUrl = window.location.origin + './assets/arts.pdf'; 
+    // গিটহাব পেজেস-এর লাইভ লিংক তৈরি করা হচ্ছে (e-Gita রিপোজিটরির জন্য)
+    // 'YOUR_GITHUB_USERNAME' এর জায়গায় আপনার আসল গিটহাব ইউজারনেম বসিয়ে দেবেন
+    const rawPdfUrl = window.location.origin + window.location.pathname + 'assets/arts.pdf';
     
+    // গুগল ডকস ভিউয়ার এমবেড লিংক
+    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
+
     card.innerHTML = `
         <div class="pdf-container">
-            <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true" class="pdf-viewer" allow="autoplay"></iframe>
+            <iframe src="${googleViewerUrl}" class="pdf-viewer" allow="autoplay"></iframe>
         </div>
     `;
     container.appendChild(card);
