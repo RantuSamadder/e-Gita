@@ -527,7 +527,7 @@ function renderVerses(chapter){
                         return part;
                     }).join(';');
                 }
-                else if(field.includes('गीतार') && field.includes('গান')){ extraClass = 'gitar-gaan-text'; }
+                else if(field === 'গীতার গান'){ extraClass = 'gitar-gaan-text'; }
                 else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
                 else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
 
