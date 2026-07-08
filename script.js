@@ -462,11 +462,10 @@ if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল 
     const card = document.createElement('div');
     card.className = 'verse-card special-page pdf-card';
     
-    // গিটহাব পেজেস-এর লাইভ লিংক তৈরি করা হচ্ছে (e-Gita রিপোজিটরির জন্য)
-    // 'YOUR_GITHUB_USERNAME' এর জায়গায় আপনার আসল গিটহাব ইউজারনেম বসিয়ে দেবেন
-    const rawPdfUrl = window.location.origin + window.location.pathname + 'assets/arts.pdf';
+    // আপনার গিটহাব রিপোজিটরি অনুযায়ী একদম সঠিক লাইভ পিডিএফ লিংক
+    const rawPdfUrl = 'https://rantusamadder.github.io/e-Gita/assets/arts.pdf';
     
-    // গুগল ডকস ভিউয়ার এমবেড লিংক
+    // গুগল ডকস ভিউয়ার এমবেড লিংক
     const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
 
     card.innerHTML = `
