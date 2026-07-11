@@ -113,7 +113,7 @@ async function loadData(){
                 verses: [] 
             });
         }
-
+        history.replaceState({ page: 'index' }, '');
         applyLanguageUI();
         renderIndex();
         initMainJumpFilter(); 
@@ -386,6 +386,9 @@ function renderChapter(chapterName, isFirstLoad = false){
     currentChapter = chapterName;
     const chapter = appData.chapters.find(item => item.sheetName === chapterName);
     if(!chapter) return;
+    if (isFirstLoad) {
+    history.pushState({ page: 'chapter', chapterName: chapterName }, '');
+    }
 
     document.getElementById('bookView').style.display = 'none';
     document.getElementById('chapterView').style.display = 'block';
@@ -457,8 +460,7 @@ function renderVerses(chapter){
 
     // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
     // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
-    // পরিবর্তন করার পরের কোড (যা মোবাইল ও ডেস্কটপ দুটিতেই সরাসরি প্রিভিউ দেখাবে):
-if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
+    if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
     const card = document.createElement('div');
     card.className = 'verse-card special-page pdf-card';
     
@@ -674,4 +676,27 @@ function backToIndex(){
     window.scrollTo({ top:0, behavior:'smooth' });
 }
 
+// ১. মোবাইল/ব্রাউজারের ব্যাক বাটন হ্যান্ডেল করার জন্য পপস্টেট লিসেনার
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.page === 'chapter') {
+        // যদি হিস্টোরিতে চ্যাপ্টারের ডাটা থাকে তবে সেই চ্যাপ্টার ওপেন করবে
+        renderChapter(event.state.chapterName, false);
+    } else {
+        // অন্যথায় হোমপেইজে বা ইনডেক্সে ফিরে যাবে
+        backToIndex(true);
+    }
+});
+
+// ২. ডেস্কটপে Backspace কি প্রেস করলে ব্যাক হওয়ার জন্য লিসেনার
+window.addEventListener('keydown', function(event) {
+    // ব্যবহারকারী যদি কোনো ইনপুট বা সিলেক্ট বক্সে টাইপ না করে থাকে, তবেই শুধু ব্যাক করবে
+    const target = event.target.tagName.toLowerCase();
+    if (event.key === 'Backspace' && target !== 'input' && target !== 'textarea' && target !== 'select') {
+        // যদি বর্তমানে চ্যাপ্টার ভিউ ওপেন থাকে, তবেই ব্যাক করাবো
+        if (document.getElementById('chapterView').style.display === 'block') {
+            event.preventDefault(); // ব্রাউজারের ডিফল্ট অ্যাকশন বন্ধ করা
+            history.back();
+        }
+    }
+});
 loadData();
