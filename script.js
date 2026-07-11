@@ -75,7 +75,7 @@ const DUAL_FIELD_GROUPS = [
 
 // Helper Function: Checks if the chapter is a special page (Updated to include PDF View)
 function isSpecialPage(chapterName) {
-    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি', 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ'].includes(chapterName);
+    return ['ভূমিকা', 'মুখবন্ধ', 'গ্রন্থকারের পরিচিতি'].includes(chapterName);
 }
 
 // Helper Function: Returns the proper column key based on the language
@@ -94,25 +94,8 @@ async function loadData(){
         const data = await response.json();
         appData = data;
         
-        // ডাইনামিকভাবে সূচীপত্রের শেষে নতুন PDF পেইজের ডাটা অবজেক্ট পুশ করা হচ্ছে
-        if (appData && appData.সূচীপত্র) {
-            appData.সূচীপত্র.push({
-                'Chapter': 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ',
-                'Chapter(En)': 'Bhagavad-gītā As It Is - Original Arts',
-                'Name': '',
-                'Name(En)': '',
-                'Details': 'মূল সংস্করণের রঙিন চিত্রসমূহ',
-                'Details(En)': 'Color illustrations from the original edition'
-            });
-        }
+        // 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ' পুশ করার ডাইনামিক কোডগুলো এখান থেকে সম্পূর্ণ বাদ দেওয়া হয়েছে
         
-        // ডাইনামিকভাবে চ্যাপ্টার লিস্টের ভেতরে নতুন চ্যাপ্টার রেফারেন্স অবজেক্ট পুশ করা হচ্ছে
-        if (appData && appData.chapters) {
-            appData.chapters.push({
-                sheetName: 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ',
-                verses: [] 
-            });
-        }
         history.replaceState({ page: 'index' }, '');
         applyLanguageUI();
         renderIndex();
@@ -126,7 +109,6 @@ async function loadData(){
         document.getElementById('loader').style.display = 'none';
     }
 }
-
 // Handle Language Switch
 function toggleLanguage() {
     const selector = document.getElementById('langSelect');
