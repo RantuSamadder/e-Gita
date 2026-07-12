@@ -441,25 +441,21 @@ function renderVerses(chapter){
     container.innerHTML = '';
 
     // কাস্টম লজিক: নতুন 'মূল চিত্রসমূহ' অধ্যায়ের জন্য সরাসরি PDF প্রিভিউ এম্বেড করা হবে
-    // এখানে #view=FitH যোগ করা হয়েছে যা সিএসএস এর সাথে মিলে ডাইনামিক সাইড-ফিট ও জুম নিয়ন্ত্রণ করবে
     if (currentChapter === 'ভগবদ্গীতা যথাযথ - মূল চিত্রসমূহ') {
-    const card = document.createElement('div');
-    card.className = 'verse-card special-page pdf-card';
-    
-    // আপনার গিটহাব রিপোজিটরি অনুযায়ী একদম সঠিক লাইভ পিডিএফ লিংক
-    const rawPdfUrl = 'https://rantusamadder.github.io/e-Gita/assets/arts.pdf';
-    
-    // গুগল ডকস ভিউয়ার এমবেড লিংক
-    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
+        const card = document.createElement('div');
+        card.className = 'verse-card special-page pdf-card';
+        
+        const rawPdfUrl = 'https://rantusamadder.github.io/e-Gita/assets/arts.pdf';
+        const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
 
-    card.innerHTML = `
-        <div class="pdf-container">
-            <iframe src="${googleViewerUrl}" class="pdf-viewer" allow="autoplay"></iframe>
-        </div>
-    `;
-    container.appendChild(card);
-    return;
-}
+        card.innerHTML = `
+            <div class="pdf-container">
+                <iframe src="${googleViewerUrl}" class="pdf-viewer" allow="autoplay"></iframe>
+            </div>
+        `;
+        container.appendChild(card);
+        return;
+    }
 
     // দ্বৈত ভাষা (Dual language) মোডের জন্য আলাদা রেন্ডারিং (পাশাপাশি বাংলা ও ইংরেজি)
     if (!isSpecialPage(currentChapter) && viewMode === 'dual') {
@@ -477,66 +473,89 @@ function renderVerses(chapter){
         selectedFields = getSelectedFields();
     }
 
-    chapter.verses.forEach((verse, index) => {
+    // --- নতুন আপডেট: স্পেশাল পেজ (ভূমিকা, মুখবন্ধ ইত্যাদি) হলে সব সেলের ডেটা একটি সিঙ্গেল কার্ডে দেখাবে ---
+    if (isSpecialPage(currentChapter)) {
         const card = document.createElement('div');
-        
-        if (isSpecialPage(currentChapter)) {
-            card.className = 'verse-card special-page';
-        } else {
-            card.className = 'verse-card';
-        }
-        
-        const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
-        const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
-        const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
-        card.id = `verse-${fullVerse}`; 
+        card.className = 'verse-card special-page';
+        card.id = `special-page-${currentChapter}`;
 
-        let html = '';
-        if (!isSpecialPage(currentChapter) && (verse['শ্লোক'] || verse['Verse'])) {
-            const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
-            const formattedVerse = verseOnly.replaceAll('_', ', ');
-            html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
-        }
-
+        let combinedHtml = '';
         selectedFields.forEach(field => {
-            if(verse[field]){
-                let extraClass = '';
-                let showTitle = true; 
-                let content = verse[field];
+            // সব সেলের ডেটা লুপ চালিয়ে একসাথে জোড়া লাগানো হচ্ছে (নিউ-লাইন সহ)
+            let combinedContent = chapter.verses
+                .map(v => v[field])
+                .filter(content => content) // ফাঁকা সেল বাদ দেওয়ার জন্য
+                .join('\n\n'); 
 
-                if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
-                else if(field === 'IAST' || field === 'বাংলা বর্ণান্তর'){ extraClass = 'bangla-IAST'; showTitle = false; }
-                else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
-                else if(field === 'শব্দার্থ' || field === 'Synonyms'){ 
-                    extraClass = 'word-meanings'; 
-                    const separator = field === 'শব্দার্থ' ? '-' : '—';
-                    
-                    content = content.split(';').map(part => {
-                        if (part.includes(separator)) {
-                            const idx = part.indexOf(separator);
-                            return `<strong>${part.substring(0, idx)}</strong>${part.substring(idx)}`;
-                        }
-                        return part;
-                    }).join(';');
-                }
-                else if(field === 'গীতার গান'){ extraClass = 'gitar-gaan-text'; }
-                else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
-                else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
-
-                if (isSpecialPage(currentChapter)) { showTitle = false; }
-
-                html += `
+            if (combinedContent) {
+                let extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                combinedHtml += `
                     <div class="field">
-                        ${showTitle ? `<div class="field-title">${field}</div>` : ''}
-                        <div class="field-content ${extraClass}">${content}</div>
+                        <div class="field-content ${extraClass}">${combinedContent}</div>
                     </div>
                 `;
             }
         });
 
-        card.innerHTML = html;
+        card.innerHTML = combinedHtml;
         container.appendChild(card);
-    });
+    } 
+    // সাধারণ অধ্যায় বা শ্লোকের ক্ষেত্রে আগের মতো প্রতি সেলের জন্য আলাদা কার্ড তৈরি হবে
+    else {
+        chapter.verses.forEach((verse, index) => {
+            const card = document.createElement('div');
+            card.className = 'verse-card';
+            
+            const verseKey = currentLang === 'en' ? 'Verse' : 'শ্লোক';
+            const fallbackKey = currentLang === 'en' ? 'শ্লোক' : 'Verse';
+            const fullVerse = verse[verseKey] || verse[fallbackKey] || `idx-${index}`;
+            card.id = `verse-${fullVerse}`; 
+
+            let html = '';
+            if (verse['শ্লোক'] || verse['Verse']) {
+                const verseOnly = fullVerse.includes('-') ? fullVerse.split('-')[1] : fullVerse;
+                const formattedVerse = verseOnly.replaceAll('_', ', ');
+                html = `<div class="verse-number">${UI[currentLang].versePrefix} ${formattedVerse}</div>`;
+            }
+
+            selectedFields.forEach(field => {
+                if(verse[field]){
+                    let extraClass = '';
+                    let showTitle = true; 
+                    let content = verse[field];
+
+                    if(field === 'সংষ্কৃতম্'){ extraClass = 'sanskrit'; showTitle = false; }
+                    else if(field === 'IAST' || field === 'বাংলা বর্ণান্তর'){ extraClass = 'bangla-IAST'; showTitle = false; }
+                    else if(field === 'Translation' || field === 'অনুবাদ'){ extraClass = 'bangla-text'; }
+                    else if(field === 'শব্দার্থ' || field === 'Synonyms'){ 
+                        extraClass = 'word-meanings'; 
+                        const separator = field === 'শব্দার্থ' ? '-' : '—';
+                        
+                        content = content.split(';').map(part => {
+                            if (part.includes(separator)) {
+                                const idx = part.indexOf(separator);
+                                return `<strong>${part.substring(0, idx)}</strong>${part.substring(idx)}`;
+                            }
+                            return part;
+                        }).join(';');
+                    }
+                    else if(field === 'গীতার গান'){ extraClass = 'gitar-gaan-text'; }
+                    else if(field === 'তাৎপর্য' || field === 'Purport'){ extraClass = 'purport-text'; }
+                    else { extraClass = 'dynamic-' + field.toLowerCase().replace(/[^a-z0-9]/g, '-'); }
+
+                    html += `
+                        <div class="field">
+                            ${showTitle ? `<div class="field-title">${field}</div>` : ''}
+                            <div class="field-content ${extraClass}">${content}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            card.innerHTML = html;
+            container.appendChild(card);
+        });
+    }
 }
 
 // দ্বৈত ভাষা (Dual language) মোডের রেন্ডারিং: বাংলা ও ইংরেজি পাশাপাশি
