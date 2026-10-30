@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="#-live-demo"><img src="https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Live Demo"></a>
+  <a href="http://rantu.me/e-Gita/"><img src="https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Live Demo"></a>
   <a href="#-tech-stack"><img src="https://img.shields.io/badge/Languages-Bengali%20|%20English%20|%20Sanskrit-gold?style=for-the-badge" alt="Languages"></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License"></a>
   <img src="https://img.shields.io/badge/PRs-welcome-orange?style=for-the-badge" alt="PRs Welcome">
